@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "build": "webpack",
+    "serve": "webpack-dev-server --open",
+    "serve-cold": "webpack-dev-server --lazy --open",
+    "watch": "webpack --progress --watch"
+  },
+  "devDependencies": {
+    "html-webpack-harddisk-plugin": "0.2.0",
+    "html-webpack-plugin": "3.2.0",
+    "ts-loader": "4.4.2",
+    "typescript": "2.9.2",
+    "webpack": "4.16.2",
+    "webpack-cli": "3.1.0",
+    "webpack-dev-server": "3.1.5"
+  }
+}
