@@ -3,11 +3,13 @@
     "build": "webpack",
     "serve": "webpack-dev-server --open",
     "serve-cold": "webpack-dev-server --lazy --open",
+    "test": "jest",
     "watch": "webpack --progress --watch"
   },
   "devDependencies": {
     "html-webpack-harddisk-plugin": "0.2.0",
     "html-webpack-plugin": "3.2.0",
+    "jest": "^23.4.1",
     "ts-loader": "4.4.2",
     "tslint": "^5.11.0",
     "typescript": "2.9.2",
