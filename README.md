@@ -7,4 +7,5 @@ WebGL game engine
 # Commands
 * `yarn run build` - Runs webpack build
 * `yarn run serve` - Serves content with hot-reload
+* `yarn run serve-cold` - Serves content with manual recompile
 * `yarn run test` - Run all tests
