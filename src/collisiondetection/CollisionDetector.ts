@@ -8,7 +8,7 @@ class CollisionDetector {
   public collisionDetection(player: Player, mapObjects: Array<MapObject>): boolean {
     let anyCollision: boolean = false;
     mapObjects.map(o => {
-      const testAxes: Array<Axis> = CollisionDetector.axes(o.coordinates);
+      const testAxes: Array<Axis> = CollisionDetector.axes(o.vertices);
       testAxes.push.apply(testAxes, CollisionDetector.axes(player.coordinates()));
 
       if (CollisionDetector.collidingAxis(testAxes, player, o)) {
@@ -24,7 +24,7 @@ class CollisionDetector {
       const axis: Axis = axes[i];
       const normal: Axis = new Axis(-axis.dy, axis.dx);
       const playerProjection: Projection = CollisionDetector.project(normal, player.coordinates());
-      const objectProjection: Projection = CollisionDetector.project(normal, obj.coordinates);
+      const objectProjection: Projection = CollisionDetector.project(normal, obj.vertices);
 
       if (!playerProjection.overlap(objectProjection)) {
         return false;
