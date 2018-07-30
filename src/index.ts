@@ -1,22 +1,8 @@
-import {KeyState} from "./keystate";
+import {Coordinate} from "./geometry/Coordinate";
+import {MapObject} from "./map/MapObject";
+import {CollisionDetector} from "./collisiondetection/CollisionDetector";
+import {Player} from "./player/Player";
 
-class Coordinate {
-  readonly x: number;
-  readonly y: number;
-
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
-class MapObject {
-  readonly coordinates: Array<Coordinate>;
-
-  constructor(coordinates: Array<Coordinate>) {
-    this.coordinates = coordinates;
-  }
-}
 
 class Main {
 
@@ -26,6 +12,7 @@ class Main {
   readonly objects: Array<MapObject>;
 
   collision: boolean = false;
+  collisionDetector: CollisionDetector = new CollisionDetector();
 
   constructor() {
     this.player = new Player(25, 25, 2, 2);
@@ -89,7 +76,7 @@ class Main {
       this.player.y = this.player.y + this.player.dy;
     }
 
-    this.collision = this.collisionDetection();
+    this.collision = this.collisionDetector.collisionDetection(this.player, this.objects);
   }
 
   private render = () => {
@@ -175,68 +162,6 @@ class Main {
     }
   };
 
-  private collisionDetection(): boolean {
-    let anyCollision: boolean = false;
-    this.objects.map(o => {
-      const testAxes: Array<Axis> = Main.axes(o.coordinates);
-      testAxes.push.apply(testAxes, Main.axes(this.player.coordinates()));
-
-      if (this.collidingAxis(testAxes, o)) {
-        anyCollision = true;
-      }
-    });
-
-    return anyCollision;
-  }
-
-  private collidingAxis(axes: Array<Axis>, obj: MapObject): boolean {
-    for (let i = 0; i < axes.length; ++i) {
-      const axis: Axis = axes[i];
-      const normal = new Axis(-axis.dy, axis.dx);
-      const playerProjection: Projection = Main.project(normal, this.player.coordinates());
-      const objectProjection: Projection = Main.project(normal, obj.coordinates);
-
-      if (!playerProjection.overlap(objectProjection)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private static project(normal: Axis, coordinates: Array<Coordinate>): Projection {
-    let min: number = normal.dot(coordinates[0]);
-    let max: number = min;
-
-    for (let i = 1; i < coordinates.length; ++i) {
-      const value: number = normal.dot(coordinates[i]);
-      if (value < min) {
-        min = value;
-      } else if (value > max) {
-        max = value;
-      }
-    }
-
-    return new Projection(min, max);
-  }
-
-  private static axes(coordinates: Array<Coordinate>): Array<Axis> {
-    const result = [];
-    for (let i = 0; i < coordinates.length - 1; ++i) {
-      result.push(
-        new Axis(
-          coordinates[i].x - coordinates[i + 1].x,
-          coordinates[i].y - coordinates[i + 1].y)
-      );
-    }
-    result.push(
-      new Axis(
-        coordinates[coordinates.length - 1].x - coordinates[0].x,
-        coordinates[coordinates.length - 1].y - coordinates[0].y)
-    );
-
-    return result;
-  }
-
   private static drawCollision(ctx: CanvasRenderingContext2D, collision: boolean): void {
     if (collision) {
       ctx.font = "30px Arial";
@@ -250,60 +175,5 @@ class Main {
   }
 }
 
-class Projection {
-  min: number;
-  max: number;
-
-  constructor(min: number, max: number) {
-    this.min = min;
-    this.max = max;
-  }
-
-  overlap(projection: Projection): boolean {
-    return Math.min(this.max, projection.max) - Math.max(this.min, projection.min) > 0;
-  }
-}
-
-class Player {
-  x: number;
-  y: number;
-  dx: number;
-  dy: number;
-
-  keyState: KeyState = new KeyState();
-
-  readonly width: number = 20;
-  readonly height: number = 50;
-
-  constructor(x: number, y: number, dx: number, dy: number) {
-    this.x = x;
-    this.y = y;
-    this.dx = dx;
-    this.dy = dy;
-  }
-
-  public coordinates(): Array<Coordinate> {
-    return [
-      new Coordinate(this.x, this.y),
-      new Coordinate(this.x + this.width, this.y),
-      new Coordinate(this.x + this.width, this.y + this.height),
-      new Coordinate(this.x, this.y + this.height),
-    ];
-  }
-}
-
-class Axis {
-  dx: number;
-  dy: number;
-
-  constructor(dx: number, dy: number) {
-    this.dx = dx;
-    this.dy = dy;
-  }
-
-  dot(point: Coordinate) {
-    return this.dx * point.x + this.dy * point.y;
-  }
-}
 
 new Main().start();
