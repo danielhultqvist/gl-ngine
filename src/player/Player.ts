@@ -19,7 +19,7 @@ class Player {
     this.dy = dy;
   }
 
-  public coordinates(): Array<Coordinate> {
+  public coordinates(): Coordinate[] {
     return [
       new Coordinate(this.x, this.y),
       new Coordinate(this.x + this.width, this.y),

@@ -1,7 +1,7 @@
 import {Polygon} from "../geometry/Polygon";
 
 interface PolygonDecompositor {
-  decompose(polygon: Polygon): Array<Polygon>;
+  split(polygon: Polygon): Polygon[];
 }
 
 export {PolygonDecompositor}

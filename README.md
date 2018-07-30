@@ -5,7 +5,7 @@ WebGL game engine
 * Yarn (`npm install -g yarn` or via website)
 
 # Commands
-* `yarn run build` - Runs webpack build
-* `yarn run serve` - Serves content with hot-reload
-* `yarn run serve-cold` - Serves content with manual recompile
-* `yarn run test` - Run all tests
+* `yarn build` - Runs webpack build
+* `yarn serve` - Serves content with hot-reload
+* `yarn serve-cold` - Serves content with manual recompile
+* `yarn test` - Run all tests
