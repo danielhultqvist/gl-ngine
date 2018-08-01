@@ -4,9 +4,7 @@ import {CollisionDetector} from "./collisiondetection/CollisionDetector";
 import {Player} from "./player/Player";
 import {Polygon} from "./geometry/Polygon";
 import {KeilDecomposition} from "./collisiondetection/KeilDecomposition";
-
-// import {Edge} from "./collisiondetection/Edge";
-
+import {CollisionVector} from "./collisiondetection/CollisionVector";
 
 class Main {
 
@@ -15,12 +13,12 @@ class Main {
   readonly player: Player;
   objects: MapObject[];
 
-  collision: boolean = false;
+  collisionVectors: CollisionVector[] = [];
   collisionDetector: CollisionDetector = new CollisionDetector();
   renderPolygons: boolean = true;
 
   constructor() {
-    this.player = new Player(25, 25, 2, 2);
+    this.player = new Player(325, 25, 2, 2);
     this.objects = Main.loadObjects();
   }
 
@@ -104,7 +102,12 @@ class Main {
       this.player.y = this.player.y + this.player.dy;
     }
 
-    this.collision = this.collisionDetector.collisionDetection(this.player, this.objects);
+    this.collisionVectors = this.collisionDetector.collisionDetection(this.player, this.objects);
+
+    this.collisionVectors.forEach(v => {
+      this.player.x = this.player.x + v.vector.dx * v.magnitude;
+      this.player.y = this.player.y + v.vector.dy * v.magnitude;
+    })
   }
 
   private render = () => {
@@ -117,7 +120,7 @@ class Main {
 
     Main.drawCharacter(ctx, this.player);
 
-    Main.drawCollision(ctx, this.collision);
+    this.drawCollision(ctx);
   };
 
   private static drawCharacter(ctx: CanvasRenderingContext2D, player: Player): void {
@@ -207,6 +210,12 @@ class Main {
     if (e.key == "d") {
       this.objects[0].vertices.forEach(v => console.log(`new Coordinate(${v.x}, ${v.y}),`));
     }
+    if (e.key == "c") {
+      console.log(this.collisionVectors);
+    }
+    if (e.key == "i") {
+      console.log(this.player.coordinates());
+    }
   };
 
   private keyUpHandler = (e: KeyboardEvent) => {
@@ -239,14 +248,12 @@ class Main {
   };
 
   private click = (e: MouseEvent) => {
-    console.log(`Added (${e.offsetX}, ${e.offsetY})`);
-    this.objects
-      = [new MapObject([new Polygon(this.objects[0].vertices.concat(new Coordinate(e.offsetX, e.offsetY)))])];
+    console.log(`Coordinate: (${e.offsetX}, ${e.offsetY})`);
   };
 
-  private static drawCollision(ctx: CanvasRenderingContext2D, collision: boolean): void {
+  private drawCollision(ctx: CanvasRenderingContext2D): void {
     ctx.save();
-    if (collision) {
+    if (this.collisionVectors.length > 0) {
       ctx.font = "30px Arial";
       ctx.fillStyle = "#FF0000";
       ctx.fillText("Collision detected", 350, 50);
@@ -255,6 +262,7 @@ class Main {
       ctx.fillStyle = "#00FF00";
       ctx.fillText("No collision", 350, 50);
     }
+
     ctx.restore();
   }
 }

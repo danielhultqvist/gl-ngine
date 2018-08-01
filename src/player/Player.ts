@@ -9,8 +9,8 @@ class Player {
 
   keyState: KeyState = new KeyState();
 
-  readonly width: number = 20;
-  readonly height: number = 50;
+  readonly width: number = 10;
+  readonly height: number = 25;
 
   constructor(x: number, y: number, dx: number, dy: number) {
     this.x = x;

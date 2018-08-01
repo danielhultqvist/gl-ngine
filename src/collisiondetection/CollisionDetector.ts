@@ -4,25 +4,33 @@ import {Coordinate} from "../geometry/Coordinate";
 import {Axis} from "../geometry/Axis";
 import {Player} from "../player/Player";
 import {Polygon} from "../geometry/Polygon";
+import {CollisionVector} from "./CollisionVector";
 
 class CollisionDetector {
-  public collisionDetection(player: Player, mapObjects: MapObject[]): boolean {
-    let anyCollision: boolean = false;
+  public collisionDetection(player: Player, mapObjects: MapObject[]): CollisionVector[] {
+    let collisionVectors: CollisionVector[] = [];
+
     mapObjects.map(o => {
       o.polygons.forEach(p => {
         const testAxes: Axis[] = CollisionDetector.axes(p.coordinates);
         testAxes.push.apply(testAxes, CollisionDetector.axes(player.coordinates()));
 
-        if (CollisionDetector.collidingAxis(testAxes, player, p)) {
-          anyCollision = true;
+        let collisionVector = CollisionDetector.collidingAxis(testAxes, player, p);
+        if (collisionVector != null) {
+          collisionVectors.push(collisionVector);
         }
       });
     });
 
-    return anyCollision;
+    return collisionVectors;
   }
 
-  private static collidingAxis(axes: Axis[], player: Player, polygon: Polygon): boolean {
+  private static collidingAxis(axes: Axis[],
+    player: Player,
+    polygon: Polygon
+  ): CollisionVector | null {
+    let minOverlap: number = Number.MAX_VALUE;
+    let overlappingAxis: Axis | null = null;
     for (let i = 0; i < axes.length; ++i) {
       const axis: Axis = axes[i];
       const normal: Axis = new Axis(-axis.dy, axis.dx);
@@ -30,10 +38,18 @@ class CollisionDetector {
       const objectProjection: Projection = CollisionDetector.project(normal, polygon.coordinates);
 
       if (!playerProjection.overlap(objectProjection)) {
-        return false;
+        return null;
+      } else {
+        const overlap: number = playerProjection.getOverlap(objectProjection);
+
+        if (overlap < minOverlap) {
+          minOverlap = overlap;
+          overlappingAxis = normal;
+        }
       }
     }
-    return true;
+
+    return new CollisionVector(<Axis>overlappingAxis, minOverlap);
   }
 
   private static project(normal: Axis, coordinates: Coordinate[]): Projection {
@@ -59,8 +75,7 @@ class CollisionDetector {
         coordinates[i + 1].y));
     }
     result.push(new Axis(coordinates[coordinates.length - 1].x -
-      coordinates[0].x, coordinates[coordinates.length -
-    1].y - coordinates[0].y));
+      coordinates[0].x, coordinates[coordinates.length - 1].y - coordinates[0].y));
 
     return result;
   }

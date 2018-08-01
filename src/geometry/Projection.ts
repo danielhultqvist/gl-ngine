@@ -8,7 +8,12 @@ class Projection {
   }
 
   overlap(projection: Projection): boolean {
-    return Math.min(this.max, projection.max) - Math.max(this.min, projection.min) > 0;
+    return this.getOverlap(projection) > 0;
+  }
+
+  getOverlap(projection: Projection): number {
+    const overlap: number = Math.min(this.max, projection.max) - Math.max(this.min, projection.min);
+    return overlap > 0 ? overlap : -1;
   }
 }
 

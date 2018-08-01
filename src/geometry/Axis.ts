@@ -5,8 +5,10 @@ class Axis {
   readonly dy: number;
 
   constructor(dx: number, dy: number) {
-    this.dx = dx;
-    this.dy = dy;
+    const normalizeFactor: number = Math.sqrt(dx*dx + dy*dy);
+
+    this.dx = dx / normalizeFactor;
+    this.dy = dy / normalizeFactor;
   }
 
   dot(point: Coordinate) {
