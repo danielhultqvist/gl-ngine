@@ -33,7 +33,7 @@ class CollisionDetector {
     let overlappingAxis: Axis | null = null;
     for (let i = 0; i < axes.length; ++i) {
       const axis: Axis = axes[i];
-      const normal: Axis = new Axis(-axis.dy, axis.dx);
+      const normal: Axis = new Axis(-axis.dy, axis.dx).normalized();
       const playerProjection: Projection = CollisionDetector.project(normal, player.coordinates());
       const objectProjection: Projection = CollisionDetector.project(normal, polygon.coordinates);
 

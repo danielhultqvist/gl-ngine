@@ -1,8 +1,9 @@
 import {PolygonDecompositor} from "./PolygonDecompositor";
 import {Polygon} from "../geometry/Polygon";
 import {Coordinate} from "../geometry/Coordinate";
-import {leftOn, right, rightOn} from "../math/Algebra";
+import {leftOn, right, rightOn} from "../geometry/Algebra";
 import {Line} from "../geometry/Line";
+import {at} from "../util/ArrayUtils";
 
 class KeilDecomposition implements PolygonDecompositor {
 
@@ -57,23 +58,23 @@ class KeilDecomposition implements PolygonDecompositor {
   }
 
   private static verticesCanSeeEachOther(coordinates: Coordinate[], a: number, b: number): boolean {
-    if (leftOn(this.at(coordinates, a + 1), this.at(coordinates, a), this.at(coordinates, b)) &&
-      rightOn(this.at(coordinates, a - 1), this.at(coordinates, a), this.at(coordinates, b))) {
+    if (leftOn(at(coordinates, a + 1), at(coordinates, a), at(coordinates, b)) &&
+      rightOn(at(coordinates, a - 1), at(coordinates, a), at(coordinates, b))) {
       return false;
     }
 
-    const dist: number = KeilDecomposition.distance(this.at(coordinates, a), this.at(coordinates, b));
+    const dist: number = at(coordinates, a).distance(at(coordinates, b));
     for (let i = 0; i < coordinates.length; ++i) {
       if ((i + 1) % coordinates.length == a || i == a) {// ignore incident edges
         continue;
       }
-      if (leftOn(this.at(coordinates, a), this.at(coordinates, b), this.at(coordinates, i + 1)) &&
-        rightOn(this.at(coordinates, a), this.at(coordinates, b), this.at(coordinates, i))) {
-        const lineA = new Line(this.at(coordinates, a), this.at(coordinates, b));
-        const lineB = new Line(this.at(coordinates, i), this.at(coordinates, i + 1));
-        const p: Coordinate = lineA.intersection(lineB);
+      if (leftOn(at(coordinates, a), at(coordinates, b), at(coordinates, i + 1)) &&
+        rightOn(at(coordinates, a), at(coordinates, b), at(coordinates, i))) {
+        const lineA = new Line(at(coordinates, a), at(coordinates, b));
+        const lineB = new Line(at(coordinates, i), at(coordinates, i + 1));
+        const intersection: Coordinate = lineA.intersection(lineB);
 
-        if (KeilDecomposition.distance(this.at(coordinates, a), p) < dist) {
+        if (intersection.distance(at(coordinates, a)) < dist) {
           return false;
         }
       }
@@ -81,29 +82,11 @@ class KeilDecomposition implements PolygonDecompositor {
     return true;
   }
 
-  private static distance(a: Coordinate, b: Coordinate): number {
-    return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
-  }
-
   public static isReflex(coordinates: Coordinate[], indexToTest: number): boolean {
-    let a: Coordinate = KeilDecomposition.at(coordinates, indexToTest - 1);
+    let a: Coordinate = at(coordinates, indexToTest - 1);
     let b: Coordinate = coordinates[indexToTest];
-    let c: Coordinate = KeilDecomposition.at(coordinates, indexToTest + 1);
+    let c: Coordinate = at(coordinates, indexToTest + 1);
     return right(a, b, c);
-  }
-
-  public static at(coordinates: Coordinate[], index: number): Coordinate {
-    if (index < 0) {
-      const offset = (-index) % coordinates.length;
-      if (offset == 0) {
-        return coordinates[0]
-      }
-      return coordinates[coordinates.length - offset];
-    } else if (index >= coordinates.length) {
-      const offset = index % coordinates.length;
-      return coordinates[offset];
-    }
-    return coordinates[index]
   }
 
   private static dedup(polygons: Polygon[]): Polygon[] {

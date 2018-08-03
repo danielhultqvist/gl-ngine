@@ -2,51 +2,6 @@ import {KeilDecomposition} from "../../src/collisiondetection/KeilDecomposition"
 import {Coordinate} from "../../src/geometry/Coordinate";
 import {Polygon} from "../../src/geometry/Polygon";
 
-test('get coordinate within range', () => {
-  const coordinates: Coordinate[] = [
-    new Coordinate(0, 1),
-    new Coordinate(1, 1),
-    new Coordinate(2, 1),
-    new Coordinate(3, 1),
-  ];
-
-  expect(KeilDecomposition.at(coordinates, 0)).toBe(coordinates[0]);
-  expect(KeilDecomposition.at(coordinates, 1)).toBe(coordinates[1]);
-  expect(KeilDecomposition.at(coordinates, 2)).toBe(coordinates[2]);
-  expect(KeilDecomposition.at(coordinates, 3)).toBe(coordinates[3]);
-});
-
-test('get coordinate outside range with negative offset', () => {
-  const coordinates: Coordinate[] = [
-    new Coordinate(0, 1),
-    new Coordinate(1, 1),
-    new Coordinate(2, 1),
-    new Coordinate(3, 1),
-  ];
-
-  expect(KeilDecomposition.at(coordinates, -1)).toBe(coordinates[3]);
-  expect(KeilDecomposition.at(coordinates, -3)).toBe(coordinates[1]);
-  expect(KeilDecomposition.at(coordinates, -4)).toBe(coordinates[0]);
-  expect(KeilDecomposition.at(coordinates, -6)).toBe(coordinates[2]);
-  expect(KeilDecomposition.at(coordinates, -9)).toBe(coordinates[3]);
-});
-
-test('get coordinate outside range with positive offset', () => {
-  const coordinates: Coordinate[] = [
-    new Coordinate(0, 1),
-    new Coordinate(1, 1),
-    new Coordinate(2, 1),
-    new Coordinate(3, 1),
-  ];
-
-  expect(KeilDecomposition.at(coordinates, 1)).toBe(coordinates[1]);
-  expect(KeilDecomposition.at(coordinates, 3)).toBe(coordinates[3]);
-  expect(KeilDecomposition.at(coordinates, 4)).toBe(coordinates[0]);
-  expect(KeilDecomposition.at(coordinates, 6)).toBe(coordinates[2]);
-  expect(KeilDecomposition.at(coordinates, 7)).toBe(coordinates[3]);
-  expect(KeilDecomposition.at(coordinates, 9)).toBe(coordinates[1]);
-});
-
 test('get child polygon within coordinate array range', () => {
   const coordinates: Coordinate[] = [
     new Coordinate(0, 1),
