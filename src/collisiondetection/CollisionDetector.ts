@@ -71,11 +71,15 @@ class CollisionDetector {
   private static axes(coordinates: Coordinate[]): Axis[] {
     const result = [];
     for (let i = 0; i < coordinates.length - 1; ++i) {
-      result.push(new Axis(coordinates[i].x - coordinates[i + 1].x, coordinates[i].y -
-        coordinates[i + 1].y));
+      result.push(new Axis(
+        coordinates[i].x - coordinates[i + 1].x,
+        coordinates[i].y - coordinates[i + 1].y
+      ));
     }
-    result.push(new Axis(coordinates[coordinates.length - 1].x -
-      coordinates[0].x, coordinates[coordinates.length - 1].y - coordinates[0].y));
+    result.push(new Axis(
+      coordinates[coordinates.length - 1].x - coordinates[0].x,
+      coordinates[coordinates.length - 1].y - coordinates[0].y
+    ));
 
     return result;
   }

@@ -1,5 +1,5 @@
 import {MapObject} from "../../src/map/MapObject";
-import {PolygonDecompositor} from "../../src/collisiondetection/PolygonDecompositor";
+import {PolygonDecomposer} from "../../src/collisiondetection/PolygonDecomposer";
 import {Polygon} from "../../src/geometry/Polygon";
 import {Coordinate} from "../../src/geometry/Coordinate";
 
@@ -25,14 +25,14 @@ test('MapObject should contain both vertices and decomposed polygons', () => {
     ]),
   ];
 
-  const decomposer: PolygonDecompositor = new FakeDecomposer(decomposedPolygons);
+  const decomposer: PolygonDecomposer = new FakeDecomposer(decomposedPolygons);
   const mapObject = new MapObject(polygon, decomposer);
 
   expect(mapObject.polygons).toEqual(decomposedPolygons);
   expect(mapObject.vertices).toEqual(polygon.coordinates);
 });
 
-class FakeDecomposer implements PolygonDecompositor {
+class FakeDecomposer implements PolygonDecomposer {
   readonly decomposedPolygons: Polygon[];
 
   constructor(decomposedPolyfons: Polygon[]) {

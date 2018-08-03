@@ -1,6 +1,6 @@
 import {Polygon} from "../geometry/Polygon";
 import {Coordinate} from "../geometry/Coordinate";
-import {PolygonDecompositor} from "../collisiondetection/PolygonDecompositor";
+import {PolygonDecomposer} from "../collisiondetection/PolygonDecomposer";
 
 function randomColor() {
   const letters = '0123456789ABCDEF';
@@ -16,7 +16,7 @@ class MapObject {
   readonly vertices: Coordinate[];
   readonly colors: string[];
 
-  constructor(polygon: Polygon, decomposer: PolygonDecompositor) {
+  constructor(polygon: Polygon, decomposer: PolygonDecomposer) {
     this.polygons = decomposer.split(polygon);
     this.colors = this.polygons.map(_ => randomColor());
     this.vertices = polygon.coordinates;

@@ -3,9 +3,9 @@ import {MapObject} from "./map/MapObject";
 import {CollisionDetector} from "./collisiondetection/CollisionDetector";
 import {Player} from "./player/Player";
 import {Polygon} from "./geometry/Polygon";
-import {KeilDecomposition} from "./collisiondetection/KeilDecomposition";
+import {KeilDecomposer} from "./collisiondetection/KeilDecomposer";
 import {CollisionVector} from "./collisiondetection/CollisionVector";
-import {PolygonDecompositor} from "./collisiondetection/PolygonDecompositor";
+import {PolygonDecomposer} from "./collisiondetection/PolygonDecomposer";
 
 class Main {
 
@@ -26,7 +26,7 @@ class Main {
   private static loadObjects(): MapObject[] {
     console.log("START: Loading objects");
     const before: number = new Date().getTime() / 1000;
-    const decomposer: PolygonDecompositor = new KeilDecomposition();
+    const decomposer: PolygonDecomposer = new KeilDecomposer();
     const tmp = [
       new MapObject(new Polygon([
         new Coordinate(50, 50),
@@ -156,7 +156,7 @@ class Main {
       }
 
       for (let i: number = 0; i < o.vertices.length; ++i) {
-        if (KeilDecomposition.isReflex(o.vertices, i)) {
+        if (KeilDecomposer.isReflex(o.vertices, i)) {
           ctx.fillStyle = "#7F5F3F";
         } else {
           ctx.fillStyle = "#0000FF";

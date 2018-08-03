@@ -1,7 +1,7 @@
 import {Polygon} from "../geometry/Polygon";
 
-interface PolygonDecompositor {
+interface PolygonDecomposer {
   split(polygon: Polygon): Polygon[];
 }
 
-export {PolygonDecompositor}
+export {PolygonDecomposer}

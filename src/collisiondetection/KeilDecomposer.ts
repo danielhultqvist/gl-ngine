@@ -1,15 +1,15 @@
-import {PolygonDecompositor} from "./PolygonDecompositor";
+import {PolygonDecomposer} from "./PolygonDecomposer";
 import {Polygon} from "../geometry/Polygon";
 import {Coordinate} from "../geometry/Coordinate";
 import {leftOn, right, rightOn} from "../geometry/Algebra";
 import {Line} from "../geometry/Line";
 import {at} from "../util/ArrayUtils";
 
-class KeilDecomposition implements PolygonDecompositor {
+class KeilDecomposer implements PolygonDecomposer {
 
   split(polygon: Polygon): Polygon[] {
     const convexPolygons = this.decompose(polygon);
-    return KeilDecomposition.dedup(convexPolygons);
+    return KeilDecomposer.dedup(convexPolygons);
   }
 
   private decompose(polygon: Polygon): Polygon[] {
@@ -18,11 +18,11 @@ class KeilDecomposition implements PolygonDecompositor {
 
     const coordinates: Coordinate[] = polygon.coordinates;
     for (let i: number = 0; i < coordinates.length; ++i) {
-      if (KeilDecomposition.isReflex(coordinates, i)) {
+      if (KeilDecomposer.isReflex(coordinates, i)) {
         for (let j: number = 0; j < coordinates.length; ++j) {
-          if (KeilDecomposition.verticesCanSeeEachOther(coordinates, i, j)) {
-            const leftPolygon = KeilDecomposition.polygonForInclusiveRange(coordinates, i, j);
-            const rightPolygon = KeilDecomposition.polygonForInclusiveRange(coordinates, j, i);
+          if (KeilDecomposer.verticesCanSeeEachOther(coordinates, i, j)) {
+            const leftPolygon = KeilDecomposer.polygonForInclusiveRange(coordinates, i, j);
+            const rightPolygon = KeilDecomposer.polygonForInclusiveRange(coordinates, j, i);
             const allPolygons: Polygon[] = this.decompose(leftPolygon)
               .concat(this.decompose(rightPolygon));
 
@@ -94,4 +94,4 @@ class KeilDecomposition implements PolygonDecompositor {
   }
 }
 
-export {KeilDecomposition}
+export {KeilDecomposer}
