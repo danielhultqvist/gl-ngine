@@ -8,8 +8,8 @@ class Coordinate {
   }
 
   public distance(coordinate: Coordinate): number {
-    return (this.x - coordinate.x) * (this.x - coordinate.x) +
-      ((this.y - coordinate.y) * (this.y - coordinate.y));
+    return Math.sqrt((this.x - coordinate.x) * (this.x - coordinate.x) +
+      ((this.y - coordinate.y) * (this.y - coordinate.y)));
   }
 }
 

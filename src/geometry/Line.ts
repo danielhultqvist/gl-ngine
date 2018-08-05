@@ -26,6 +26,10 @@ class Line {
       return new Coordinate(0, 0);
     }
   }
+
+  length(): number {
+    return this.first.distance(this.second);
+  }
 }
 
 export {Line}

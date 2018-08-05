@@ -12,3 +12,25 @@ export function at<T>(elements: T[], index: number): T {
     return offset == 0 ? elements[0] : elements[elements.length - offset];
   }
 }
+
+/**
+ * Extracts an array from a input array, starting from start index to end index
+ * @param elements Array to extract sub array from
+ * @param start Inclusive start position
+ * @param end Inclusive end position
+ */
+export function subarray<T>(elements: T[], start: number, end: number): T[] {
+  const result: T[] = [];
+  for (let i = 0; i < elements.length; ++i) {
+    if (start < end) {
+      if (i >= start && i <= end) {
+        result.push(elements[i]);
+      }
+    } else {
+      if (i >= start || i <= end) {
+        result.push(elements[i]);
+      }
+    }
+  }
+  return result;
+}

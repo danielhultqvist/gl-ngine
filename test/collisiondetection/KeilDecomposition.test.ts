@@ -1,6 +1,7 @@
 import {KeilDecomposer} from "../../src/collisiondetection/KeilDecomposer";
 import {Coordinate} from "../../src/geometry/Coordinate";
 import {Polygon} from "../../src/geometry/Polygon";
+import {subarray} from "../../src/util/ArrayUtils";
 
 test('get child polygon within coordinate array range', () => {
   const coordinates: Coordinate[] = [
@@ -12,7 +13,7 @@ test('get child polygon within coordinate array range', () => {
     new Coordinate(5, 1),
   ];
 
-  expect(KeilDecomposer.polygonForInclusiveRange(coordinates, 1, 4)).toEqual(new Polygon([
+  expect(new Polygon(subarray(coordinates, 1, 4))).toEqual(new Polygon([
     new Coordinate(1, 1),
     new Coordinate(2, 1),
     new Coordinate(3, 1),
@@ -30,7 +31,7 @@ test('get child polygon outside coordinate array range', () => {
     new Coordinate(5, 1),
   ];
 
-  expect(KeilDecomposer.polygonForInclusiveRange(coordinates, 4, 1)).toEqual(new Polygon([
+  expect(new Polygon(subarray(coordinates, 4, 1))).toEqual(new Polygon([
     new Coordinate(0, 1),
     new Coordinate(1, 1),
     new Coordinate(4, 1),
@@ -38,7 +39,7 @@ test('get child polygon outside coordinate array range', () => {
   ]))
 });
 
-test('split complex polygon into smaller convex polygons', () => {
+test('decompose complex polygon into smaller convex polygons', () => {
   //   (0,0)     (2,0)
   //      |\      /|          |\            /|
   //      | \    / |          | \          / |
@@ -56,7 +57,7 @@ test('split complex polygon into smaller convex polygons', () => {
     new Coordinate(0, 2),
   ]);
 
-  const result: Polygon[] = new KeilDecomposer().split(polygon);
+  const result: Polygon[] = new KeilDecomposer().decompose(polygon);
 
   expect(result).toEqual([
     new Polygon([

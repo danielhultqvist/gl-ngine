@@ -17,7 +17,7 @@ class MapObject {
   readonly colors: string[];
 
   constructor(polygon: Polygon, decomposer: PolygonDecomposer) {
-    this.polygons = decomposer.split(polygon);
+    this.polygons = decomposer.decompose(polygon);
     this.colors = this.polygons.map(_ => randomColor());
     this.vertices = polygon.coordinates;
   }

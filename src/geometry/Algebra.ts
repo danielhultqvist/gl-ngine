@@ -1,4 +1,5 @@
 import {Coordinate} from "./Coordinate";
+import {at} from "../util/ArrayUtils";
 
 /**
  * Test if a coordinate is right side of a line between start and stop in a counter
@@ -55,4 +56,11 @@ export function leftOn(start: Coordinate, testCoordinate: Coordinate, stop: Coor
  */
 export function determinant(a: Coordinate, b: Coordinate, c: Coordinate): number {
   return 1 / 2 * (a.x * b.y + a.y * c.x + b.x * c.y - c.x * b.y - c.y * a.x - a.y * b.x);
+}
+
+export function isReflex(coordinates: Coordinate[], indexToTest: number): boolean {
+  return right(at(coordinates, indexToTest - 1),
+    coordinates[indexToTest],
+    at(coordinates, indexToTest + 1)
+  );
 }

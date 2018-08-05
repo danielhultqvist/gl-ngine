@@ -39,7 +39,7 @@ class FakeDecomposer implements PolygonDecomposer {
     this.decomposedPolygons = decomposedPolyfons;
   }
 
-  split(_: Polygon): Polygon[] {
+  decompose(_: Polygon): Polygon[] {
     return this.decomposedPolygons;
   }
 }

@@ -1,30 +1,41 @@
 import {PolygonDecomposer} from "./PolygonDecomposer";
 import {Polygon} from "../geometry/Polygon";
 import {Coordinate} from "../geometry/Coordinate";
-import {leftOn, right, rightOn} from "../geometry/Algebra";
+import {isReflex, leftOn, rightOn} from "../geometry/Algebra";
 import {Line} from "../geometry/Line";
-import {at} from "../util/ArrayUtils";
+import {at, subarray} from "../util/ArrayUtils";
+
+function lineIntersectsDiagonal(
+  coordinates: Coordinate[],
+  first: number,
+  second: number,
+  third: number
+) {
+  return leftOn(at(coordinates, first), at(coordinates, second), at(coordinates, third + 1)) &&
+    rightOn(at(coordinates, first), at(coordinates, second), at(coordinates, third));
+}
+
+function incidentEdge(coordinates: Coordinate[], first: number, second: number) {
+  return (first + 1) % coordinates.length == second || first == second;
+}
+
+function peakHidingVertex(coordinates: Coordinate[], first: number, second: number) {
+  return leftOn(at(coordinates, first + 1), at(coordinates, first), at(coordinates, second)) &&
+    rightOn(at(coordinates, first - 1), at(coordinates, first), at(coordinates, second));
+}
 
 class KeilDecomposer implements PolygonDecomposer {
 
-  split(polygon: Polygon): Polygon[] {
-    const convexPolygons = this.decompose(polygon);
-    return KeilDecomposer.dedup(convexPolygons);
-  }
-
-  private decompose(polygon: Polygon): Polygon[] {
+  public decompose(polygon: Polygon): Polygon[] {
+    const coordinates: Coordinate[] = polygon.coordinates;
     let min: Polygon[] = [polygon];
     let minNumberOfPolygons: number = Number.MAX_VALUE;
 
-    const coordinates: Coordinate[] = polygon.coordinates;
     for (let i: number = 0; i < coordinates.length; ++i) {
-      if (KeilDecomposer.isReflex(coordinates, i)) {
+      if (isReflex(coordinates, i)) {
         for (let j: number = 0; j < coordinates.length; ++j) {
           if (KeilDecomposer.verticesCanSeeEachOther(coordinates, i, j)) {
-            const leftPolygon = KeilDecomposer.polygonForInclusiveRange(coordinates, i, j);
-            const rightPolygon = KeilDecomposer.polygonForInclusiveRange(coordinates, j, i);
-            const allPolygons: Polygon[] = this.decompose(leftPolygon)
-              .concat(this.decompose(rightPolygon));
+            const allPolygons = this.decomposePolygon(coordinates, i, j);
 
             if (allPolygons.length < minNumberOfPolygons) {
               min = allPolygons;
@@ -38,59 +49,31 @@ class KeilDecomposer implements PolygonDecomposer {
     return min;
   }
 
-  public static polygonForInclusiveRange(coordinates: Coordinate[],
-    start: number,
-    end: number
-  ): Polygon {
-    const result: Coordinate[] = [];
-    for (let i = 0; i < coordinates.length; ++i) {
-      if (start < end) {
-        if (i >= start && i <= end) {
-          result.push(coordinates[i]);
-        }
-      } else {
-        if (i >= start || i <= end) {
-          result.push(coordinates[i]);
-        }
-      }
-    }
-    return new Polygon(result);
+  private decomposePolygon(coordinates: Coordinate[], i: number, j: number) {
+    const leftPolygon = new Polygon(subarray(coordinates, i, j));
+    const rightPolygon = new Polygon(subarray(coordinates, j, i));
+    return this.decompose(leftPolygon).concat(this.decompose(rightPolygon));
   }
 
   private static verticesCanSeeEachOther(coordinates: Coordinate[], a: number, b: number): boolean {
-    if (leftOn(at(coordinates, a + 1), at(coordinates, a), at(coordinates, b)) &&
-      rightOn(at(coordinates, a - 1), at(coordinates, a), at(coordinates, b))) {
+    if (peakHidingVertex(coordinates, a, b)) {
       return false;
     }
 
-    const dist: number = at(coordinates, a).distance(at(coordinates, b));
-    for (let i = 0; i < coordinates.length; ++i) {
-      if ((i + 1) % coordinates.length == a || i == a) {// ignore incident edges
-        continue;
-      }
-      if (leftOn(at(coordinates, a), at(coordinates, b), at(coordinates, i + 1)) &&
-        rightOn(at(coordinates, a), at(coordinates, b), at(coordinates, i))) {
-        const lineA = new Line(at(coordinates, a), at(coordinates, b));
-        const lineB = new Line(at(coordinates, i), at(coordinates, i + 1));
-        const intersection: Coordinate = lineA.intersection(lineB);
+    const diagonal = new Line(at(coordinates, a), at(coordinates, b));
+    const length: number = diagonal.length();
 
-        if (intersection.distance(at(coordinates, a)) < dist) {
+    for (let i = 0; i < coordinates.length; ++i) {
+      if (lineIntersectsDiagonal(coordinates, a, b, i) && !incidentEdge(coordinates, i, a)) {
+        const tmpLine = new Line(at(coordinates, i), at(coordinates, i + 1));
+        const intersection: Coordinate = diagonal.intersection(tmpLine);
+
+        if (intersection.distance(at(coordinates, a)) < length) {
           return false;
         }
       }
     }
     return true;
-  }
-
-  public static isReflex(coordinates: Coordinate[], indexToTest: number): boolean {
-    let a: Coordinate = at(coordinates, indexToTest - 1);
-    let b: Coordinate = coordinates[indexToTest];
-    let c: Coordinate = at(coordinates, indexToTest + 1);
-    return right(a, b, c);
-  }
-
-  private static dedup(polygons: Polygon[]): Polygon[] {
-    return polygons;
   }
 }
 

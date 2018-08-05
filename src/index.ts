@@ -6,6 +6,7 @@ import {Polygon} from "./geometry/Polygon";
 import {KeilDecomposer} from "./collisiondetection/KeilDecomposer";
 import {CollisionVector} from "./collisiondetection/CollisionVector";
 import {PolygonDecomposer} from "./collisiondetection/PolygonDecomposer";
+import {isReflex} from "./geometry/Algebra";
 
 class Main {
 
@@ -156,7 +157,7 @@ class Main {
       }
 
       for (let i: number = 0; i < o.vertices.length; ++i) {
-        if (KeilDecomposer.isReflex(o.vertices, i)) {
+        if (isReflex(o.vertices, i)) {
           ctx.fillStyle = "#7F5F3F";
         } else {
           ctx.fillStyle = "#0000FF";
