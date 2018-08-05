@@ -1,7 +1,8 @@
 import {Coordinate} from "../geometry/Coordinate";
 import {KeyState} from "../keystate";
+import {Renderable} from "../rendering/Renderable";
 
-class Player {
+class Player implements Renderable {
   x: number;
   y: number;
   dx: number;
@@ -26,6 +27,16 @@ class Player {
       new Coordinate(this.x + this.width, this.y + this.height),
       new Coordinate(this.x, this.y + this.height),
     ];
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(this.x, this.y, this.width, this.height);
+    ctx.fillStyle = "#FF0000";
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
   }
 }
 

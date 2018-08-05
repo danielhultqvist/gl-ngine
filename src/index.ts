@@ -6,7 +6,6 @@ import {Polygon} from "./geometry/Polygon";
 import {KeilDecomposer} from "./collisiondetection/KeilDecomposer";
 import {CollisionVector} from "./collisiondetection/CollisionVector";
 import {PolygonDecomposer} from "./collisiondetection/PolygonDecomposer";
-import {isReflex} from "./geometry/Algebra";
 
 class Main {
 
@@ -70,7 +69,6 @@ class Main {
   public start(): void {
     this.listenToActions();
 
-    this.loop();
     setInterval(this.loop, Main.UPDATE_RATE);
   }
 
@@ -112,63 +110,9 @@ class Main {
     const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
 
     Main.clear(canvas, ctx);
-
-    this.drawMap(ctx, this.objects);
-
-    Main.drawCharacter(ctx, this.player);
-
-    this.drawCollision(ctx);
+    this.objects.map(o => o.render(ctx));
+    this.player.render(ctx);
   };
-
-  private static drawCharacter(ctx: CanvasRenderingContext2D, player: Player): void {
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(player.x, player.y, player.width, player.height);
-    ctx.fillStyle = "#FF0000";
-    ctx.fill();
-    ctx.closePath();
-    ctx.restore();
-  }
-
-  private drawMap(ctx: CanvasRenderingContext2D, objects: MapObject[]): void {
-    objects.map(o => {
-      ctx.save();
-
-      if (this.renderPolygons) {
-        for (let i: number = 0; i < o.polygons.length; ++i) {
-          const polygon = o.polygons[i];
-          ctx.beginPath();
-          ctx.fillStyle = o.colors[i];
-          ctx.moveTo(polygon.coordinates[0].x, polygon.coordinates[0].y);
-          for (let i: number = 1; i < polygon.coordinates.length; ++i) {
-            ctx.lineTo(polygon.coordinates[i].x, polygon.coordinates[i].y);
-          }
-          ctx.fill();
-        }
-      } else {
-        ctx.beginPath();
-        ctx.fillStyle = "#00FF00";
-        ctx.moveTo(o.vertices[0].x, o.vertices[0].y);
-        for (let i: number = 1; i < o.vertices.length; ++i) {
-          ctx.lineTo(o.vertices[i].x, o.vertices[i].y);
-        }
-        ctx.fill();
-      }
-
-      for (let i: number = 0; i < o.vertices.length; ++i) {
-        if (isReflex(o.vertices, i)) {
-          ctx.fillStyle = "#7F5F3F";
-        } else {
-          ctx.fillStyle = "#0000FF";
-        }
-        ctx.beginPath();
-        ctx.ellipse(o.vertices[i].x, o.vertices[i].y, 5, 5, 0, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-
-      ctx.restore();
-    });
-  }
 
   private static clear(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -247,21 +191,6 @@ class Main {
   private click = (e: MouseEvent) => {
     console.log(`Coordinate: (${e.offsetX}, ${e.offsetY})`);
   };
-
-  private drawCollision(ctx: CanvasRenderingContext2D): void {
-    ctx.save();
-    if (this.collisionVectors.length > 0) {
-      ctx.font = "30px Arial";
-      ctx.fillStyle = "#FF0000";
-      ctx.fillText("Collision detected", 350, 50);
-    } else {
-      ctx.font = "30px Arial";
-      ctx.fillStyle = "#00FF00";
-      ctx.fillText("No collision", 350, 50);
-    }
-
-    ctx.restore();
-  }
 }
 
 
