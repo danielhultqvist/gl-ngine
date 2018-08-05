@@ -1,5 +1,4 @@
 import {Coordinate} from "../geometry/Coordinate";
-import {KeyState} from "../keystate";
 import {Renderable} from "../rendering/Renderable";
 
 class Player implements Renderable {
@@ -7,8 +6,6 @@ class Player implements Renderable {
   y: number;
   dx: number;
   dy: number;
-
-  keyState: KeyState = new KeyState();
 
   readonly width: number = 10;
   readonly height: number = 25;
