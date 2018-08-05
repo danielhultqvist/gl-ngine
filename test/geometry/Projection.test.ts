@@ -7,8 +7,10 @@ test('calculate overlapping projections', () => {
   const overlap: number = projection1.getOverlap(projection2);
   const overlaps: boolean = projection1.overlap(projection2);
 
-  expect(overlap).toEqual(10);
-  expect(overlaps).toBeTruthy();
+  expect(overlap)
+    .toEqual(10);
+  expect(overlaps)
+    .toBeTruthy();
 });
 
 test('determine that projections are not overlapping', () => {
@@ -17,5 +19,6 @@ test('determine that projections are not overlapping', () => {
 
   const overlaps: boolean = projection1.overlap(projection2);
 
-  expect(overlaps).toBeFalsy();
+  expect(overlaps)
+    .toBeFalsy();
 });

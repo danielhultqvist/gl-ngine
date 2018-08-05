@@ -13,12 +13,13 @@ test('get child polygon within coordinate array range', () => {
     new Coordinate(5, 1),
   ];
 
-  expect(new Polygon(subarray(coordinates, 1, 4))).toEqual(new Polygon([
-    new Coordinate(1, 1),
-    new Coordinate(2, 1),
-    new Coordinate(3, 1),
-    new Coordinate(4, 1),
-  ]))
+  expect(new Polygon(subarray(coordinates, 1, 4)))
+    .toEqual(new Polygon([
+      new Coordinate(1, 1),
+      new Coordinate(2, 1),
+      new Coordinate(3, 1),
+      new Coordinate(4, 1),
+    ]))
 });
 
 test('get child polygon outside coordinate array range', () => {
@@ -31,12 +32,13 @@ test('get child polygon outside coordinate array range', () => {
     new Coordinate(5, 1),
   ];
 
-  expect(new Polygon(subarray(coordinates, 4, 1))).toEqual(new Polygon([
-    new Coordinate(0, 1),
-    new Coordinate(1, 1),
-    new Coordinate(4, 1),
-    new Coordinate(5, 1),
-  ]))
+  expect(new Polygon(subarray(coordinates, 4, 1)))
+    .toEqual(new Polygon([
+      new Coordinate(0, 1),
+      new Coordinate(1, 1),
+      new Coordinate(4, 1),
+      new Coordinate(5, 1),
+    ]))
 });
 
 test('decompose complex polygon into smaller convex polygons', () => {
@@ -59,17 +61,18 @@ test('decompose complex polygon into smaller convex polygons', () => {
 
   const result: Polygon[] = new KeilDecomposer().decompose(polygon);
 
-  expect(result).toEqual([
-    new Polygon([
-      new Coordinate(1, 1),
-      new Coordinate(2, 0),
-      new Coordinate(2, 2),
-    ]),
-    new Polygon([
-      new Coordinate(0, 0),
-      new Coordinate(1, 1),
-      new Coordinate(2, 2),
-      new Coordinate(0, 2),
-    ]),
-  ]);
+  expect(result)
+    .toEqual([
+      new Polygon([
+        new Coordinate(1, 1),
+        new Coordinate(2, 0),
+        new Coordinate(2, 2),
+      ]),
+      new Polygon([
+        new Coordinate(0, 0),
+        new Coordinate(1, 1),
+        new Coordinate(2, 2),
+        new Coordinate(0, 2),
+      ]),
+    ]);
 });

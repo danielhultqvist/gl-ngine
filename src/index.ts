@@ -13,7 +13,7 @@ class Main {
   private static UPDATE_RATE: number = 1000 / 25;
 
   readonly player: Player;
-  objects: MapObject[];
+  readonly objects: MapObject[];
 
   collisionVectors: CollisionVector[] = [];
   collisionDetector: CollisionDetector = new CollisionDetector();
@@ -71,7 +71,6 @@ class Main {
     this.listenToActions();
 
     this.loop();
-    console.log(Main.UPDATE_RATE);
     setInterval(this.loop, Main.UPDATE_RATE);
   }
 
@@ -101,7 +100,7 @@ class Main {
       this.player.y = this.player.y + this.player.dy;
     }
 
-    this.collisionVectors = this.collisionDetector.collisionDetection(this.player, this.objects);
+    this.collisionVectors = this.collisionDetector.detect(this.player, this.objects);
     this.collisionVectors.forEach(v => {
       this.player.x = this.player.x + v.vector.dx * v.magnitude;
       this.player.y = this.player.y + v.vector.dy * v.magnitude;

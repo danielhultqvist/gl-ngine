@@ -52,7 +52,8 @@ class KeilDecomposer implements PolygonDecomposer {
   private decomposePolygon(coordinates: Coordinate[], i: number, j: number) {
     const leftPolygon = new Polygon(subarray(coordinates, i, j));
     const rightPolygon = new Polygon(subarray(coordinates, j, i));
-    return this.decompose(leftPolygon).concat(this.decompose(rightPolygon));
+    return this.decompose(leftPolygon)
+      .concat(this.decompose(rightPolygon));
   }
 
   private static verticesCanSeeEachOther(coordinates: Coordinate[], a: number, b: number): boolean {

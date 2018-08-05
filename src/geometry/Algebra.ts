@@ -58,6 +58,12 @@ export function determinant(a: Coordinate, b: Coordinate, c: Coordinate): number
   return 1 / 2 * (a.x * b.y + a.y * c.x + b.x * c.y - c.x * b.y - c.y * a.x - a.y * b.x);
 }
 
+/**
+ * Determines wheter a vertex is a reflex point, i.e. minimum 180% internal angle (inside polygon)
+ * @param {Coordinate[]} coordinates
+ * @param {number} indexToTest
+ * @returns {boolean}
+ */
 export function isReflex(coordinates: Coordinate[], indexToTest: number): boolean {
   return right(at(coordinates, indexToTest - 1),
     coordinates[indexToTest],

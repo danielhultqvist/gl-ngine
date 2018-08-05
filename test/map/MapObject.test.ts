@@ -28,8 +28,10 @@ test('MapObject should contain both vertices and decomposed polygons', () => {
   const decomposer: PolygonDecomposer = new FakeDecomposer(decomposedPolygons);
   const mapObject = new MapObject(polygon, decomposer);
 
-  expect(mapObject.polygons).toEqual(decomposedPolygons);
-  expect(mapObject.vertices).toEqual(polygon.coordinates);
+  expect(mapObject.polygons)
+    .toEqual(decomposedPolygons);
+  expect(mapObject.vertices)
+    .toEqual(polygon.coordinates);
 });
 
 class FakeDecomposer implements PolygonDecomposer {

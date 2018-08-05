@@ -8,7 +8,8 @@ test('calculate determinant for counter clockwise coordinates', () => {
 
   const det = determinant(coordinate1, coordinate2, coordinate3);
 
-  expect(det).toEqual(1);
+  expect(det)
+    .toEqual(1);
 });
 
 test('calculate determinant for clockwise coordinates', () => {
@@ -18,32 +19,39 @@ test('calculate determinant for clockwise coordinates', () => {
 
   const det = determinant(coordinate1, coordinate2, coordinate3);
 
-  expect(det).toEqual(-1);
+  expect(det)
+    .toEqual(-1);
 });
 
 test('point is on the right side of a line', () => {
   const start: Coordinate = new Coordinate(0, 0);
-  const end: Coordinate  = new Coordinate(0, 2);
+  const end: Coordinate = new Coordinate(0, 2);
   const testCoordinate: Coordinate = new Coordinate(-1, 1);
 
-  expect(right(start, testCoordinate, end)).toBeTruthy();
-  expect(left(start, testCoordinate, end)).toBeFalsy();
+  expect(right(start, testCoordinate, end))
+    .toBeTruthy();
+  expect(left(start, testCoordinate, end))
+    .toBeFalsy();
 });
 
 test('point is on the left side of a line', () => {
   const start: Coordinate = new Coordinate(0, 0);
-  const end: Coordinate  = new Coordinate(0, 2);
+  const end: Coordinate = new Coordinate(0, 2);
   const testCoordinate: Coordinate = new Coordinate(1, 1);
 
-  expect(left(start, testCoordinate, end)).toBeTruthy();
-  expect(right(start, testCoordinate, end)).toBeFalsy();
+  expect(left(start, testCoordinate, end))
+    .toBeTruthy();
+  expect(right(start, testCoordinate, end))
+    .toBeFalsy();
 });
 
 test('point is on the line', () => {
   const start: Coordinate = new Coordinate(0, 0);
-  const end: Coordinate  = new Coordinate(0, 2);
+  const end: Coordinate = new Coordinate(0, 2);
   const testCoordinate: Coordinate = new Coordinate(0, 1);
 
-  expect(rightOn(start, testCoordinate, end)).toBeTruthy();
-  expect(leftOn(start, testCoordinate, end)).toBeTruthy();
+  expect(rightOn(start, testCoordinate, end))
+    .toBeTruthy();
+  expect(leftOn(start, testCoordinate, end))
+    .toBeTruthy();
 });
