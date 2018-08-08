@@ -15,6 +15,10 @@ class Projection {
     const overlap: number = Math.min(this.max, projection.max) - Math.max(this.min, projection.min);
     return overlap > 0 ? overlap : -1;
   }
+
+  contains(projection: Projection): boolean {
+    return projection.min > this.min && projection.max < this.max;
+  }
 }
 
 export {Projection}

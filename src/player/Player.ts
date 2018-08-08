@@ -26,7 +26,7 @@ class Player implements Renderable {
     ];
   }
 
-  render(ctx: CanvasRenderingContext2D): void {
+  public render(ctx: CanvasRenderingContext2D): void {
     ctx.save();
     ctx.beginPath();
     ctx.rect(this.x, this.y, this.width, this.height);
@@ -34,6 +34,10 @@ class Player implements Renderable {
     ctx.fill();
     ctx.closePath();
     ctx.restore();
+  }
+
+  public getCenter(): Coordinate {
+    return new Coordinate(this.x + this.width / 2, this.y + this.height / 2);
   }
 }
 

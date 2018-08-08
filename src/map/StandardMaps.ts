@@ -40,3 +40,20 @@ export function MAP_1(decomposer: PolygonDecomposer) {
     ]), decomposer),
   ]);
 }
+
+export function MAP_2(decomposer: PolygonDecomposer) {
+  return new Map([
+    new MapObject(new Polygon([
+      new Coordinate(500, 500),
+      new Coordinate(550, 500),
+      new Coordinate(550, 640),
+      new Coordinate(500, 640),
+    ]), decomposer),
+    new MapObject(new Polygon([
+      new Coordinate(400, 300),
+      new Coordinate(650, 300),
+      new Coordinate(650, 340),
+      new Coordinate(400, 340),
+    ]), decomposer)
+  ]);
+}

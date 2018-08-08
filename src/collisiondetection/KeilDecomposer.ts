@@ -49,9 +49,9 @@ class KeilDecomposer implements PolygonDecomposer {
     return min;
   }
 
-  private decomposePolygon(coordinates: Coordinate[], i: number, j: number) {
-    const leftPolygon = new Polygon(subarray(coordinates, i, j));
-    const rightPolygon = new Polygon(subarray(coordinates, j, i));
+  private decomposePolygon(coordinates: Coordinate[], first: number, second: number) {
+    const leftPolygon = new Polygon(subarray(coordinates, first, second));
+    const rightPolygon = new Polygon(subarray(coordinates, second, first));
     return this.decompose(leftPolygon)
       .concat(this.decompose(rightPolygon));
   }

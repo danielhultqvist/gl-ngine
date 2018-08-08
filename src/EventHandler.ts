@@ -1,6 +1,7 @@
 import {KeyState} from "./keystate";
+import {Player} from "./player/Player";
 
-export function keyDownHandler(e: KeyboardEvent, state: KeyState) {
+export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
   if ([
     32,
     37,
@@ -18,6 +19,7 @@ export function keyDownHandler(e: KeyboardEvent, state: KeyState) {
   // up
   if (e.keyCode == 38) {
     state.up = true;
+    player.dy = -10;
   }
   // right
   if (e.keyCode == 39) {
@@ -58,6 +60,10 @@ export function keyUpHandler(e: KeyboardEvent, state: KeyState) {
   }
 }
 
-export function click(e: MouseEvent) {
-  console.log(`Coordinate: (${e.offsetX}, ${e.offsetY})`);
+export function click(e: MouseEvent, player: Player) {
+  player.x = e.offsetX;
+  player.y = e.offsetY;
+  player.dx = 0;
+  player.dy = 0;
+  console.log(`Teleported to: (${e.offsetX}, ${e.offsetY})`);
 }

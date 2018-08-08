@@ -4,6 +4,7 @@
     "serve": "webpack-dev-server --open",
     "serve-cold": "webpack-dev-server --lazy --open",
     "test": "jest",
+    "test-coverage": "jest --coverage",
     "watch": "webpack --progress --watch"
   },
   "devDependencies": {

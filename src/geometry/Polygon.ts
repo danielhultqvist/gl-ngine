@@ -34,6 +34,16 @@ class Polygon {
       return coordinates;
     }
   }
+
+  public getCenter(): Coordinate {
+    let centerX: number = 0;
+    let centerY: number = 0;
+    this.coordinates.forEach(c => {
+      centerX += c.x;
+      centerY += c.y;
+    });
+    return new Coordinate(centerX / this.coordinates.length, centerY / this.coordinates.length);
+  }
 }
 
 export {Polygon}

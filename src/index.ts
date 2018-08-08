@@ -5,8 +5,9 @@ import {CollisionVector} from "./collisiondetection/CollisionVector";
 import {PolygonDecomposer} from "./collisiondetection/PolygonDecomposer";
 import {click, keyDownHandler, keyUpHandler} from "./EventHandler";
 import {KeyState} from "./keystate";
-import {MAP_1} from "./map/StandardMaps";
+import {MAP_2} from "./map/StandardMaps";
 import {Map} from "./map/Map";
+import {Gravity} from "./physics/Gravity";
 
 class Main {
 
@@ -20,7 +21,7 @@ class Main {
   collisionDetector: CollisionDetector = new CollisionDetector();
 
   constructor() {
-    this.player = new Player(325, 25, 2, 2);
+    this.player = new Player(325, 25, 0, 20);
     this.map = Main.loadMap();
   }
 
@@ -28,7 +29,7 @@ class Main {
     console.log("START: Loading objects");
     const before: number = new Date().getTime() / 1000;
     const decomposer: PolygonDecomposer = new KeilDecomposer();
-    const map = MAP_1(decomposer);
+    const map = MAP_2(decomposer);
     const after: number = new Date().getTime() / 1000;
     console.log(`DONE: Loading objects. Processing time: ${after - before} ms`);
     return map;
@@ -48,30 +49,59 @@ class Main {
 
   private listenToActions(): void {
     const keystate = this.keyState;
-    document.addEventListener("keydown", e => keyDownHandler(e, keystate), false);
+    document.addEventListener("keydown", e => keyDownHandler(e, keystate, this.player), false);
     document.addEventListener("keyup", e => keyUpHandler(e, keystate), false);
-    document.addEventListener("click", click, false);
+    document.addEventListener("click", e => click(e, this.player), false);
   }
 
   private update(): void {
-    if (this.keyState.left) {
-      this.player.x = this.player.x - this.player.dx;
+    if (this.keyState.left && this.keyState.right) {
+      this.player.dx = 0;
+    } else if (this.keyState.left) {
+      this.player.dx = -10;
+    } else if (this.keyState.right) {
+      this.player.dx = 10;
+    } else {
+      this.player.dx = 0;
     }
-    if (this.keyState.right) {
-      this.player.x = this.player.x + this.player.dx;
+
+    this.player.x = this.player.x + this.player.dx;
+    this.player.y = this.player.y + this.player.dy;
+
+    let bottomCollision: boolean = false;
+
+    // Temp to not fall out
+    if (this.player.y > 640 - this.player.height) {
+      this.player.y = 640 - this.player.height;
+      bottomCollision = true;
+    } else if (this.player.y < 0) {
+      this.player.y = 0;
+      bottomCollision = true;
     }
-    if (this.keyState.up) {
-      this.player.y = this.player.y - this.player.dy;
+    if (this.player.x > 1024 - this.player.width) {
+      this.player.x = 1024 - this.player.width;
+      this.player.dx = 0;
+    } else if (this.player.x < 0) {
+      this.player.x = 0;
+      this.player.dx = 0;
     }
-    if (this.keyState.down) {
-      this.player.y = this.player.y + this.player.dy;
-    }
+
+    console.log(this.player.dy);
 
     this.collisionVectors = this.collisionDetector.detect(this.player, this.map.objects);
     this.collisionVectors.forEach(v => {
       this.player.x = this.player.x + v.vector.dx * v.magnitude;
       this.player.y = this.player.y + v.vector.dy * v.magnitude;
-    })
+      if (Math.abs(v.vector.dy) > 1e-8) {
+        bottomCollision = true;
+      }
+    });
+
+    if (bottomCollision) {
+      this.player.dy = 0;
+    } else {
+      Gravity.apply(this.player);
+    }
   }
 
   private render = () => {

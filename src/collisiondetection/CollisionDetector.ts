@@ -7,25 +7,22 @@ import {Polygon} from "../geometry/Polygon";
 import {CollisionVector} from "./CollisionVector";
 
 function axes(coordinates: Coordinate[]): Axis[] {
-  const result: Axis[] = [
-    new Axis(
-      coordinates[coordinates.length - 1].x - coordinates[0].x,
-      coordinates[coordinates.length - 1].y - coordinates[0].y
-    )
-  ];
+  const result: Axis[] = [];
   for (let i = 0; i < coordinates.length - 1; ++i) {
     result.push(new Axis(
-      coordinates[i].x - coordinates[i + 1].x,
-      coordinates[i].y - coordinates[i + 1].y
+      coordinates[i].x - coordinates[(i + 1) % coordinates.length].x,
+      coordinates[i].y - coordinates[(i + 1) % coordinates.length].y
     ));
   }
-
   return result;
 }
 
 function collidingAxis(axes: Axis[], player: Player, polygon: Polygon): CollisionVector | null {
   let minOverlap: number = Number.MAX_VALUE;
-  let overlappingAxis: Axis | null = null;
+  let overlappingAxis: Axis = new Axis(-1, -1);
+
+  const playerCenter = player.getCenter();
+  const polygonCenter = polygon.getCenter();
 
   for (let i = 0; i < axes.length; ++i) {
     const axis: Axis = axes[i];
@@ -34,7 +31,14 @@ function collidingAxis(axes: Axis[], player: Player, polygon: Polygon): Collisio
     const objectProjection: Projection = project(normal, polygon.coordinates);
 
     if (playerProjection.overlap(objectProjection)) {
-      const overlap: number = playerProjection.getOverlap(objectProjection);
+      let overlap: number = playerProjection.getOverlap(objectProjection);
+      
+      if (playerProjection.contains(objectProjection)
+        || objectProjection.contains(playerProjection)) {
+        const max: number = Math.abs(playerProjection.max - objectProjection.max);
+        const min: number = Math.abs(playerProjection.min - objectProjection.min);
+        overlap += max > min ? min : max;
+      }
 
       if (overlap < minOverlap) {
         minOverlap = overlap;
@@ -45,7 +49,13 @@ function collidingAxis(axes: Axis[], player: Player, polygon: Polygon): Collisio
     }
   }
 
-  return new CollisionVector(<Axis>overlappingAxis, minOverlap);
+  let tmpAxis = overlappingAxis;
+  const line = new Axis(playerCenter.x - polygonCenter.x, playerCenter.y - polygonCenter.y);
+  if (line.dot(tmpAxis) < 0) {
+    tmpAxis = overlappingAxis.negate();
+  }
+
+  return new CollisionVector(<Axis>tmpAxis, minOverlap);
 }
 
 function project(normal: Axis, coordinates: Coordinate[]): Projection {
