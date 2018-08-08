@@ -1,5 +1,7 @@
 import {Asset} from "./assets/Asset";
 import {AssetLoader} from "./assets/AssetLoader";
+import {GameState} from "./gamestates/GameState";
+import {MainMenuState} from "./gamestates/MainMenuState";
 import {PlayingState} from "./gamestates/PlayingState";
 
 const ALL_ASSETS = [
@@ -15,10 +17,17 @@ const ALL_ASSETS = [
 
 class Main {
 
-  private lastTimestamp = Main.timestamp();
+  private lastTimestamp: number = Main.timestamp();
   private deltaTime: number = 0;
-  private readonly updateStepSize = 1 / 60;
-  private currentGameState: PlayingState = new PlayingState();
+  private readonly updateStepSize: number = 1 / 60;
+  private readonly canvas: HTMLCanvasElement;
+  private currentGameState: GameState = new MainMenuState();
+
+  // private currentGameState: GameState = new PlayingState();
+
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+  }
 
   public start(): void {
     AssetLoader.load(ALL_ASSETS, () => {
@@ -37,15 +46,25 @@ class Main {
       this.currentGameState.update(this.updateStepSize)
     }
 
-    this.currentGameState.render();
+    this.render();
     this.lastTimestamp = now;
+
+    this.handleState();
 
     requestAnimationFrame(this.loop);
   };
 
+  private render() {
+    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    this.currentGameState.render(this.canvas);
+  }
+
   private static prepareCanvas(): void {
     (<Element>document.getElementById("loading")).remove();
-    const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
     canvas.width = 1024;
     canvas.height = 640;
     canvas.focus();
@@ -56,6 +75,26 @@ class Main {
       ? window.performance.now()
       : new Date().getTime();
   }
+
+  private handleState() {
+    let nextState: GameState | null = null;
+
+    switch (this.currentGameState.moveToState()) {
+      case MainMenuState.ID:
+        nextState = new MainMenuState();
+        break;
+      case PlayingState.ID:
+        nextState = new PlayingState();
+        break;
+    }
+
+    if (nextState != null) {
+      this.currentGameState.teardown();
+      nextState.setup();
+      this.currentGameState = nextState;
+    }
+  }
 }
 
-new Main().start();
+const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
+new Main(canvas).start();

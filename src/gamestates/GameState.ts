@@ -2,7 +2,8 @@ import {StateId} from "./StateId";
 
 interface GameState {
   id(): StateId;
-  render(): void;
+  moveToState(): StateId;
+  render(canvas: HTMLCanvasElement): void;
   setup(): void;
   teardown(): void;
   update(deltaTime: number): void;

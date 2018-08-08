@@ -10,10 +10,15 @@ import {AssetStore} from "../assets/AssetStore";
 import {click, keyDownHandler, keyUpHandler} from "../events/EventHandler";
 import {MapLoader} from "../map/MapLoader";
 import {MAP_4} from "../map/StandardMaps";
+import {NoopState} from "./NoopState";
+import {MainMenuState} from "./MainMenuState";
+import {EventListener} from "../events/EventListener";
 
 class PlayingState implements GameState {
 
   public static readonly ID: StateId = new StateId("state-playing");
+
+  private nextState: StateId = NoopState.ID;
 
   private readonly player: Player;
   private readonly map: Map;
@@ -21,23 +26,26 @@ class PlayingState implements GameState {
 
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
+  private eventListeners: EventListener[] = [];
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
     this.map = MapLoader.load(MAP_4);
   }
 
-  id(): StateId {
+  public id(): StateId {
     return PlayingState.ID;
   }
 
-  render(): void {
-    const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
+  public moveToState(): StateId {
+    return this.nextState;
+  }
+
+  public render(canvas: HTMLCanvasElement): void {
     const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(AssetStore.get("map-layers-1"), 0, 0, 1024, 640);
     ctx.drawImage(AssetStore.get("map-layers-2"), 0, 0, 1024, 640);
     ctx.drawImage(AssetStore.get("map-layers-3"), 0, 0, 1024, 640);
@@ -48,21 +56,28 @@ class PlayingState implements GameState {
     this.player.render(ctx);
   }
 
-  setup(): void {
+  public setup(): void {
     const keystate = this.keyState;
-    document.addEventListener("keydown", e => keyDownHandler(e, keystate, this.player), false);
-    document.addEventListener("keyup", e => keyUpHandler(e, keystate), false);
-    document.addEventListener("click", e => click(e, this.player), false);
+
+    this.eventListeners.push(
+      new EventListener("keydown", (e: KeyboardEvent) => keyDownHandler(e, keystate, this.player)),
+      new EventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key == 'm') {
+          this.nextState = MainMenuState.ID;
+        }
+      }),
+      new EventListener("keyup", (e: KeyboardEvent) => keyUpHandler(e, keystate)),
+      new EventListener("click", (e: MouseEvent) => click(e, this.player))
+    );
+
+    this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
   }
 
-  teardown(): void {
-    const keystate = this.keyState;
-    document.removeEventListener("keydown", e => keyDownHandler(e, keystate, this.player));
-    document.removeEventListener("keyup", e => keyUpHandler(e, keystate));
-    document.removeEventListener("click", e => click(e, this.player));
+  public teardown(): void {
+    this.eventListeners.forEach(el => document.removeEventListener(el.event, el.method));
   }
 
-  update(deltaTime: number): void {
+  public update(deltaTime: number): void {
     if (this.keyState.left && this.keyState.right) {
       this.player.dx = 0;
     } else if (this.keyState.left) {
