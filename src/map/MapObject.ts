@@ -23,7 +23,7 @@ class MapObject implements Renderable {
     this.vertices = polygon.coordinates;
   }
 
-  render(ctx: CanvasRenderingContext2D): void {
+  public render(ctx: CanvasRenderingContext2D): void {
     ctx.save();
     ctx.beginPath();
     ctx.fillStyle = "#00c30f";
@@ -32,6 +32,26 @@ class MapObject implements Renderable {
       ctx.lineTo(this.vertices[i].x, this.vertices[i].y);
     }
     ctx.fill();
+    ctx.restore();
+
+    this.renderGrass(ctx);
+  }
+
+  private renderGrass(ctx: CanvasRenderingContext2D): void {
+    ctx.save();
+
+    for (let i = 0; i < this.vertices.length; ++i) {
+      if (this.vertices[i].x < this.vertices[(i + 1) % this.vertices.length].x) {
+        ctx.beginPath();
+        ctx.moveTo(this.vertices[i].x, this.vertices[i].y);
+        ctx.lineTo(this.vertices[(i + 1) % this.vertices.length].x,
+          this.vertices[(i + 1) % this.vertices.length].y);
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = "#008e0b";
+        ctx.stroke();
+      }
+    }
+
     ctx.restore();
   }
 }

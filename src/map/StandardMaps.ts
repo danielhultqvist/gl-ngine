@@ -68,3 +68,36 @@ export function MAP_3(decomposer: PolygonDecomposer) {
     ]), decomposer)
   ]);
 }
+
+export function MAP_4(decomposer: PolygonDecomposer) {
+  return new Map([
+    new MapObject(new Polygon([
+      new Coordinate(0, 600),
+      new Coordinate(1200, 600),
+      new Coordinate(1200, 700),
+      new Coordinate(0, 800),
+    ]), decomposer),
+    new MapObject(new Polygon([
+      new Coordinate(710, 600),
+      new Coordinate(910, 510),
+      new Coordinate(1200, 510),
+      new Coordinate(1200, 650),
+      new Coordinate(810, 650),
+    ]), decomposer),
+    new MapObject(new Polygon([
+      new Coordinate(410, 300),
+      new Coordinate(660, 300),
+      new Coordinate(660, 320),
+      new Coordinate(410, 320),
+    ]), decomposer),
+    new MapObject(new Polygon([
+      new Coordinate(410, 300),
+      new Coordinate(410, 320),
+      new Coordinate(350, 360),
+      new Coordinate(100, 340),
+      new Coordinate(0, 250),
+      new Coordinate(240, 280),
+      new Coordinate(360, 290),
+    ]), decomposer),
+  ]);
+}

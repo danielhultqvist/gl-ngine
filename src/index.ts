@@ -3,23 +3,26 @@ import {Player} from "./player/Player";
 import {CollisionVector} from "./collisiondetection/CollisionVector";
 import {click, keyDownHandler, keyUpHandler} from "./events/EventHandler";
 import {KeyState} from "./events/keystate";
-import {MAP_2} from "./map/StandardMaps";
+import {MAP_4} from "./map/StandardMaps";
 import {Map} from "./map/Map";
 import {Gravity} from "./physics/Gravity";
 import {MapLoader} from "./map/MapLoader";
 import {Asset} from "./assets/Asset";
 import {AssetLoader} from "./assets/AssetLoader";
+import {AssetStore} from "./assets/AssetStore";
 
 const ALL_ASSETS = [
   new Asset(
     "characters-wizard",
-    // new URL("http://hulkfisk.com/game/assets/characters/wizard/wizard2.png")
-    new URL("http://localhost:8000/wizard3.png")
+    new URL("http://hulkfisk.com/game/assets/characters/wizard/wizard3.png")
   ),
+  new Asset("map-layers-1", new URL("http://hulkfisk.com/game/assets/map/layers/1.png")),
+  new Asset("map-layers-2", new URL("http://hulkfisk.com/game/assets/map/layers/2.png")),
+  new Asset("map-layers-3", new URL("http://hulkfisk.com/game/assets/map/layers/3.png")),
+  new Asset("map-layers-4", new URL("http://hulkfisk.com/game/assets/map/layers/4.png")),
 ];
 
 class Main {
-
   private static UPDATE_RATE: number = 1000 / 25;
 
   readonly player: Player;
@@ -31,12 +34,13 @@ class Main {
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
-    this.map = MapLoader.load(MAP_2);
+    this.map = MapLoader.load(MAP_4);
   }
 
   public start(): void {
     AssetLoader.load(ALL_ASSETS, () => {
       this.listenToActions();
+      Main.prepareCanvas();
 
       setInterval(this.loop, Main.UPDATE_RATE);
     });
@@ -112,9 +116,25 @@ class Main {
     const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.drawImage(AssetStore.get("map-layers-1"), 0, 0, 1024, 640);
+    ctx.drawImage(AssetStore.get("map-layers-2"), 0, 0, 1024, 640);
+    ctx.drawImage(AssetStore.get("map-layers-3"), 0, 0, 1024, 640);
+    ctx.drawImage(AssetStore.get("map-layers-4"), 0, 0, 1024, 640);
+    ctx.restore();
+
     this.map.render(ctx);
     this.player.render(ctx);
   };
+
+  private static prepareCanvas(): void {
+    (<Element>document.getElementById("loading")).remove();
+    const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
+    canvas.width = 1024;
+    canvas.height = 640;
+    canvas.focus();
+  }
 }
 
 new Main().start();
