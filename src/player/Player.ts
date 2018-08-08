@@ -38,7 +38,7 @@ class Player implements Renderable {
   }
 
   public update(): void {
-    this.animationFrame += 5;
+    this.animationFrame += 4;
     if (this.animationFrame > Player.MAX_ANIMATION) {
       this.animationFrame = 0;
     }

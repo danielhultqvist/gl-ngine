@@ -1,11 +1,11 @@
 import {Player} from "../player/Player";
 
 class Gravity {
-  static readonly MAX_VELOCITY = 10;
-  static readonly REFRESH_RATE = 0.12; // TODO [dh] This constant should be injected
+  private static readonly MAX_VELOCITY = 10;
+  private static readonly GAME_GRAVITY = 2;
 
-  public static apply(player: Player) {
-    const newSpeed: number = 9.82 * Gravity.REFRESH_RATE;
+  public static apply(player: Player, updateStepSize: number) {
+    const newSpeed: number = 9.82 * Gravity.GAME_GRAVITY *  updateStepSize;
     player.dy += newSpeed > Gravity.MAX_VELOCITY ? Gravity.MAX_VELOCITY : newSpeed;
   }
 }

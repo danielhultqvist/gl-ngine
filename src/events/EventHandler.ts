@@ -19,7 +19,7 @@ export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player
   // up
   if (e.keyCode == 38) {
     state.up = true;
-    player.dy = -10;
+    player.dy = -7;
   }
   // right
   if (e.keyCode == 39) {

@@ -23,14 +23,16 @@ const ALL_ASSETS = [
 ];
 
 class Main {
-  private static UPDATE_RATE: number = 1000 / 25;
+  private readonly player: Player;
+  private readonly map: Map;
+  private readonly keyState = new KeyState();
 
-  readonly player: Player;
-  readonly map: Map;
-  readonly keyState = new KeyState();
+  private lastTimestamp = Main.timestamp();
+  private deltaTime: number = 0;
+  private readonly updateStepSize = 1 / 60;
 
-  collisionVectors: CollisionVector[] = [];
-  collisionDetector: CollisionDetector = new CollisionDetector();
+  private collisionVectors: CollisionVector[] = [];
+  private collisionDetector: CollisionDetector = new CollisionDetector();
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
@@ -42,14 +44,25 @@ class Main {
       this.listenToActions();
       Main.prepareCanvas();
 
-      setInterval(this.loop, Main.UPDATE_RATE);
+      requestAnimationFrame(this.loop);
+      // setInterval(this.loop, Main.UPDATE_RATE);
     });
   }
 
   private loop = () => {
-    this.update();
+    const now = Main.timestamp();
+
+    this.deltaTime = this.deltaTime + Math.min(1, (now - this.lastTimestamp) / 1000);
+    while (this.deltaTime > this.updateStepSize) {
+      this.deltaTime = this.deltaTime - this.updateStepSize;
+      this.update(this.updateStepSize)
+    }
 
     this.render();
+
+    this.lastTimestamp = now;
+
+    requestAnimationFrame(this.loop);
   };
 
   private listenToActions(): void {
@@ -59,13 +72,13 @@ class Main {
     document.addEventListener("click", e => click(e, this.player), false);
   }
 
-  private update(): void {
+  private update(updateStepSize: number): void {
     if (this.keyState.left && this.keyState.right) {
       this.player.dx = 0;
     } else if (this.keyState.left) {
-      this.player.dx = -10;
+      this.player.dx = -300 * updateStepSize;
     } else if (this.keyState.right) {
-      this.player.dx = 10;
+      this.player.dx = 300 * updateStepSize;
     } else {
       this.player.dx = 0;
     }
@@ -97,7 +110,7 @@ class Main {
     this.collisionVectors.forEach(v => {
       this.player.x = this.player.x + v.vector.dx * v.magnitude;
       this.player.y = this.player.y + v.vector.dy * v.magnitude;
-      if (Math.abs(v.vector.dy) > 1e-8 && this.player.dy > 0) {
+      if (Math.abs(v.vector.dy) > 1e-8 && Math.abs(this.player.dy) > 0) {
         bottomCollision = true;
       }
     });
@@ -105,7 +118,7 @@ class Main {
     if (bottomCollision) {
       this.player.dy = 0;
     } else {
-      Gravity.apply(this.player);
+      Gravity.apply(this.player, updateStepSize);
     }
 
     this.player.update();
@@ -134,6 +147,12 @@ class Main {
     canvas.width = 1024;
     canvas.height = 640;
     canvas.focus();
+  }
+
+  private static timestamp(): number {
+    return window.performance && window.performance.now
+      ? window.performance.now()
+      : new Date().getTime();
   }
 }
 
