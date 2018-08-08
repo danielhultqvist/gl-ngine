@@ -3,10 +3,20 @@ import {Player} from "./player/Player";
 import {CollisionVector} from "./collisiondetection/CollisionVector";
 import {click, keyDownHandler, keyUpHandler} from "./events/EventHandler";
 import {KeyState} from "./events/keystate";
-import {MAP_3} from "./map/StandardMaps";
+import {MAP_2} from "./map/StandardMaps";
 import {Map} from "./map/Map";
 import {Gravity} from "./physics/Gravity";
 import {MapLoader} from "./map/MapLoader";
+import {Asset} from "./assets/Asset";
+import {AssetLoader} from "./assets/AssetLoader";
+
+const ALL_ASSETS = [
+  new Asset(
+    "characters-wizard",
+    // new URL("http://hulkfisk.com/game/assets/characters/wizard/wizard2.png")
+    new URL("http://localhost:8000/wizard3.png")
+  ),
+];
 
 class Main {
 
@@ -21,13 +31,15 @@ class Main {
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
-    this.map = MapLoader.load(MAP_3);
+    this.map = MapLoader.load(MAP_2);
   }
 
   public start(): void {
-    this.listenToActions();
+    AssetLoader.load(ALL_ASSETS, () => {
+      this.listenToActions();
 
-    setInterval(this.loop, Main.UPDATE_RATE);
+      setInterval(this.loop, Main.UPDATE_RATE);
+    });
   }
 
   private loop = () => {
@@ -91,6 +103,8 @@ class Main {
     } else {
       Gravity.apply(this.player);
     }
+
+    this.player.update();
   }
 
   private render = () => {
