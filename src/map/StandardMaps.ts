@@ -57,3 +57,14 @@ export function MAP_2(decomposer: PolygonDecomposer) {
     ]), decomposer)
   ]);
 }
+
+export function MAP_3(decomposer: PolygonDecomposer) {
+  return new Map([
+    new MapObject(new Polygon([
+      new Coordinate(400, 500),
+      new Coordinate(650, 500),
+      new Coordinate(650, 501),
+      new Coordinate(400, 501),
+    ]), decomposer)
+  ]);
+}

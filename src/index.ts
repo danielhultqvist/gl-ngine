@@ -1,13 +1,12 @@
 import {CollisionDetector} from "./collisiondetection/CollisionDetector";
 import {Player} from "./player/Player";
-import {KeilDecomposer} from "./collisiondetection/KeilDecomposer";
 import {CollisionVector} from "./collisiondetection/CollisionVector";
-import {PolygonDecomposer} from "./collisiondetection/PolygonDecomposer";
-import {click, keyDownHandler, keyUpHandler} from "./EventHandler";
-import {KeyState} from "./keystate";
-import {MAP_2} from "./map/StandardMaps";
+import {click, keyDownHandler, keyUpHandler} from "./events/EventHandler";
+import {KeyState} from "./events/keystate";
+import {MAP_3} from "./map/StandardMaps";
 import {Map} from "./map/Map";
 import {Gravity} from "./physics/Gravity";
+import {MapLoader} from "./map/MapLoader";
 
 class Main {
 
@@ -22,17 +21,7 @@ class Main {
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
-    this.map = Main.loadMap();
-  }
-
-  private static loadMap(): Map {
-    console.log("START: Loading objects");
-    const before: number = new Date().getTime() / 1000;
-    const decomposer: PolygonDecomposer = new KeilDecomposer();
-    const map = MAP_2(decomposer);
-    const after: number = new Date().getTime() / 1000;
-    console.log(`DONE: Loading objects. Processing time: ${after - before} ms`);
-    return map;
+    this.map = MapLoader.load(MAP_3);
   }
 
   public start(): void {
@@ -108,15 +97,10 @@ class Main {
     const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
     const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
 
-    Main.clear(canvas, ctx);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     this.map.render(ctx);
     this.player.render(ctx);
   };
-
-  private static clear(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
 }
-
 
 new Main().start();

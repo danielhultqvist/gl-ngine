@@ -1,5 +1,5 @@
 import {KeyState} from "./keystate";
-import {Player} from "./player/Player";
+import {Player} from "../player/Player";
 
 export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
   if ([
