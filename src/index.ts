@@ -73,9 +73,11 @@ class Main {
     // Temp to not fall out
     if (this.player.y > 640 - this.player.height) {
       this.player.y = 640 - this.player.height;
+      this.player.dy = 0;
       bottomCollision = true;
     } else if (this.player.y < 0) {
       this.player.y = 0;
+      this.player.dy = 0;
       bottomCollision = true;
     }
     if (this.player.x > 1024 - this.player.width) {
@@ -86,13 +88,11 @@ class Main {
       this.player.dx = 0;
     }
 
-    console.log(this.player.dy);
-
     this.collisionVectors = this.collisionDetector.detect(this.player, this.map.objects);
     this.collisionVectors.forEach(v => {
       this.player.x = this.player.x + v.vector.dx * v.magnitude;
       this.player.y = this.player.y + v.vector.dy * v.magnitude;
-      if (Math.abs(v.vector.dy) > 1e-8) {
+      if (Math.abs(v.vector.dy) > 1e-8 && this.player.dy > 0) {
         bottomCollision = true;
       }
     });

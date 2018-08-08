@@ -32,7 +32,7 @@ function collidingAxis(axes: Axis[], player: Player, polygon: Polygon): Collisio
 
     if (playerProjection.overlap(objectProjection)) {
       let overlap: number = playerProjection.getOverlap(objectProjection);
-      
+
       if (playerProjection.contains(objectProjection)
         || objectProjection.contains(playerProjection)) {
         const max: number = Math.abs(playerProjection.max - objectProjection.max);
