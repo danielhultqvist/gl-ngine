@@ -87,6 +87,7 @@ class Main {
     this.player.y = this.player.y + this.player.dy;
 
     let bottomCollision: boolean = false;
+    let topCollision: boolean = false;
 
     // Temp to not fall out
     if (this.player.y > 640 - this.player.height) {
@@ -107,17 +108,28 @@ class Main {
     }
 
     this.collisionVectors = this.collisionDetector.detect(this.player, this.map.objects);
+
+    let collisionDeltaX = 0;
+    let collisionDeltaY = 0;
     this.collisionVectors.forEach(v => {
-      this.player.x = this.player.x + v.vector.dx * v.magnitude;
-      this.player.y = this.player.y + v.vector.dy * v.magnitude;
-      if (Math.abs(v.vector.dy) > 1e-8 && Math.abs(this.player.dy) > 0) {
-        bottomCollision = true;
-      }
+      collisionDeltaX += v.vector.dx * v.magnitude;
+      collisionDeltaY += v.vector.dy * v.magnitude;
     });
+
+    this.player.x = this.player.x + collisionDeltaX;
+    this.player.y = this.player.y + collisionDeltaY;
+    if (collisionDeltaY < -1e-8 && this.player.dy > 0) {
+      bottomCollision = true;
+    } else if (collisionDeltaY > 1e-8 && this.player.dy < 0) {
+      topCollision = true;
+    }
 
     if (bottomCollision) {
       this.player.dy = 0;
     } else {
+      if (topCollision) {
+        this.player.dy = 0;
+      }
       Gravity.apply(this.player, updateStepSize);
     }
 
