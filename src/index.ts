@@ -2,7 +2,7 @@ import {Asset} from "./assets/Asset";
 import {AssetLoader} from "./assets/AssetLoader";
 import {GameState} from "./gamestates/GameState";
 import {MainMenuState} from "./gamestates/MainMenuState";
-import {PlayingState} from "./gamestates/PlayingState";
+import {PlayingState} from "./gamestates/playing/PlayingState";
 
 const ALL_ASSETS = [
   new Asset(

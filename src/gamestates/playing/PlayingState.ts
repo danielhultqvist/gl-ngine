@@ -1,18 +1,18 @@
-import {GameState} from "./GameState";
-import {StateId} from "./StateId";
-import {Gravity} from "../physics/Gravity";
-import {Map} from "../map/Map";
-import {Player} from "../player/Player";
-import {KeyState} from "../events/KeyState";
-import {CollisionVector} from "../collisiondetection/CollisionVector";
-import {CollisionDetector} from "../collisiondetection/CollisionDetector";
-import {AssetStore} from "../assets/AssetStore";
-import {click, keyDownHandler, keyUpHandler} from "../events/EventHandler";
-import {MapLoader} from "../map/MapLoader";
-import {MAP_4} from "../map/StandardMaps";
-import {NoopState} from "./NoopState";
-import {MainMenuState} from "./MainMenuState";
-import {EventListener} from "../events/EventListener";
+import {GameState} from "../GameState";
+import {StateId} from "../StateId";
+import {Gravity} from "../../physics/Gravity";
+import {Map} from "../../map/Map";
+import {Player} from "../../player/Player";
+import {KeyState} from "./KeyState";
+import {CollisionVector} from "../../collisiondetection/CollisionVector";
+import {CollisionDetector} from "../../collisiondetection/CollisionDetector";
+import {AssetStore} from "../../assets/AssetStore";
+import {click, keyDownHandler, keyUpHandler} from "./EventHandler";
+import {MapLoader} from "../../map/MapLoader";
+import {MAP_4} from "../../map/StandardMaps";
+import {NoopState} from "../NoopState";
+import {MainMenuState} from "../MainMenuState";
+import {EventListener} from "../../events/EventListener";
 
 class PlayingState implements GameState {
 
@@ -78,19 +78,22 @@ class PlayingState implements GameState {
   }
 
   public update(deltaTime: number): void {
-    if (this.keyState.left && this.keyState.right) {
-      this.player.dx = 0;
-    } else if (this.keyState.left) {
-      this.player.dx = -300 * deltaTime;
-    } else if (this.keyState.right) {
-      this.player.dx = 300 * deltaTime;
+    this.handleEvents(deltaTime);
+    let {bottomCollision, topCollision} = this.handleCollisions();
+
+    if (bottomCollision) {
+      this.player.dy = 0;
     } else {
-      this.player.dx = 0;
+      if (topCollision) {
+        this.player.dy = 0;
+      }
+      Gravity.apply(this.player, deltaTime);
     }
 
-    this.player.x = this.player.x + this.player.dx;
-    this.player.y = this.player.y + this.player.dy;
+    this.player.update();
+  }
 
+  private handleCollisions() {
     let bottomCollision: boolean = false;
     let topCollision: boolean = false;
 
@@ -128,17 +131,22 @@ class PlayingState implements GameState {
     } else if (collisionDeltaY > 1e-8 && this.player.dy < 0) {
       topCollision = true;
     }
+    return {bottomCollision, topCollision};
+  }
 
-    if (bottomCollision) {
-      this.player.dy = 0;
+  private handleEvents(deltaTime: number) {
+    if (this.keyState.left && this.keyState.right) {
+      this.player.dx = 0;
+    } else if (this.keyState.left) {
+      this.player.dx = -300 * deltaTime;
+    } else if (this.keyState.right) {
+      this.player.dx = 300 * deltaTime;
     } else {
-      if (topCollision) {
-        this.player.dy = 0;
-      }
-      Gravity.apply(this.player, deltaTime);
+      this.player.dx = 0;
     }
 
-    this.player.update();
+    this.player.x = this.player.x + this.player.dx;
+    this.player.y = this.player.y + this.player.dy;
   }
 }
 

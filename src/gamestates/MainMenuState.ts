@@ -1,7 +1,7 @@
 import {GameState} from "./GameState";
 import {StateId} from "./StateId";
 import {NoopState} from "./NoopState";
-import {PlayingState} from "./PlayingState";
+import {PlayingState} from "./playing/PlayingState";
 import {EventListener} from "../events/EventListener";
 
 class MainMenuState implements GameState {
