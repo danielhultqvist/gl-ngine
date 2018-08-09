@@ -66,7 +66,7 @@ class Main {
   private static prepareCanvas(): void {
     (<Element>document.getElementById("loading")).remove();
     canvas.width = 1024;
-    canvas.height = 640;
+    canvas.height = 768;
     canvas.focus();
   }
 
@@ -98,3 +98,18 @@ class Main {
 
 const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
 new Main(canvas).start();
+
+/**
+ Temp stuff
+ */
+const fullscreenButton = document.getElementById("full-screen");
+if (fullscreenButton != null) {
+  console.log("Adding even handler");
+  fullscreenButton.addEventListener("click", _ => {
+    console.log("Move to full screen");
+
+    canvas.webkitRequestFullScreen();
+  });
+} else {
+  console.log("Could not find full screen button")
+}

@@ -87,8 +87,8 @@ class PlayingState implements GameState {
     let topCollision: boolean = false;
 
     // Temp to not fall out
-    if (this.player.y > 640 - this.player.height) {
-      this.player.y = 640 - this.player.height;
+    if (this.player.y > 768 - this.player.height) {
+      this.player.y = 768 - this.player.height;
       this.player.dy = 0;
       bottomCollision = true;
     } else if (this.player.y < 0) {
