@@ -23,7 +23,9 @@ class MapObject implements Renderable {
     this.vertices = polygon.coordinates;
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
+  public render(canvas: HTMLCanvasElement): void {
+    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
+
     ctx.save();
     ctx.beginPath();
     ctx.fillStyle = "#00c30f";

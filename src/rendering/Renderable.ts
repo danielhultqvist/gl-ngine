@@ -1,5 +1,5 @@
 interface Renderable {
-  render(ctx: CanvasRenderingContext2D): void;
+  render(canvas: HTMLCanvasElement): void;
 }
 
 export {Renderable}

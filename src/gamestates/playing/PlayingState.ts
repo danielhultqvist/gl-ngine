@@ -6,7 +6,6 @@ import {Player} from "../../player/Player";
 import {KeyState} from "./KeyState";
 import {CollisionVector} from "../../collisiondetection/CollisionVector";
 import {CollisionDetector} from "../../collisiondetection/CollisionDetector";
-import {AssetStore} from "../../assets/AssetStore";
 import {click, keyDownHandler, keyUpHandler} from "./EventHandler";
 import {MapLoader} from "../../map/MapLoader";
 import {MAP_4} from "../../map/StandardMaps";
@@ -42,18 +41,8 @@ class PlayingState implements GameState {
   }
 
   public render(canvas: HTMLCanvasElement): void {
-    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
-
-    ctx.save();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(AssetStore.get("map-layers-1"), 0, 0, 1024, 640);
-    ctx.drawImage(AssetStore.get("map-layers-2"), 0, 0, 1024, 640);
-    ctx.drawImage(AssetStore.get("map-layers-3"), 0, 0, 1024, 640);
-    ctx.drawImage(AssetStore.get("map-layers-4"), 0, 0, 1024, 640);
-    ctx.restore();
-
-    this.map.render(ctx);
-    this.player.render(ctx);
+    this.map.render(canvas);
+    this.player.render(canvas);
   }
 
   public setup(): void {

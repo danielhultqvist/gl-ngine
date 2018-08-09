@@ -56,7 +56,9 @@ class Player implements Renderable {
     }
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
+  public render(canvas: HTMLCanvasElement): void {
+    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
+
     ctx.save();
     const srcX = Math.floor(this.animationFrame / 10) * this.width;
     const srcY = (this.movementState * 2 + this.direction) * this.height;
