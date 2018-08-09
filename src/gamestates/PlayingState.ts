@@ -3,7 +3,7 @@ import {StateId} from "./StateId";
 import {Gravity} from "../physics/Gravity";
 import {Map} from "../map/Map";
 import {Player} from "../player/Player";
-import {KeyStatea} from "../events/KeyStatea";
+import {KeyState} from "../events/KeyState";
 import {CollisionVector} from "../collisiondetection/CollisionVector";
 import {CollisionDetector} from "../collisiondetection/CollisionDetector";
 import {AssetStore} from "../assets/AssetStore";
@@ -22,7 +22,7 @@ class PlayingState implements GameState {
 
   private readonly player: Player;
   private readonly map: Map;
-  private readonly keyState = new KeyStatea();
+  private readonly keyState = new KeyState();
 
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();

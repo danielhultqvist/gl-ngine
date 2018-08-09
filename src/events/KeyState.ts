@@ -1,4 +1,4 @@
-export class KeyStatea {
+export class KeyState {
   right: boolean = false;
   left: boolean = false;
   up: boolean = false;

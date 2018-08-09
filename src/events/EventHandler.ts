@@ -1,7 +1,7 @@
-import {KeyStatea} from "./KeyStatea";
+import {KeyState} from "./KeyState";
 import {Player} from "../player/Player";
 
-export function keyDownHandler(e: KeyboardEvent, state: KeyStatea, player: Player) {
+export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
   if ([
     32,
     37,
@@ -31,7 +31,7 @@ export function keyDownHandler(e: KeyboardEvent, state: KeyStatea, player: Playe
   }
 }
 
-export function keyUpHandler(e: KeyboardEvent, state: KeyStatea) {
+export function keyUpHandler(e: KeyboardEvent, state: KeyState) {
   if ([
     32,
     37,
