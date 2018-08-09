@@ -3,6 +3,7 @@ import {AssetLoader} from "./assets/AssetLoader";
 import {GameState} from "./gamestates/GameState";
 import {MainMenuState} from "./gamestates/MainMenuState";
 import {PlayingState} from "./gamestates/playing/PlayingState";
+import {goFullscreen} from "./util/FullscreenShim";
 
 const ALL_ASSETS = [
   new Asset(
@@ -104,12 +105,7 @@ new Main(canvas).start();
  */
 const fullscreenButton = document.getElementById("full-screen");
 if (fullscreenButton != null) {
-  console.log("Adding even handler");
   fullscreenButton.addEventListener("click", _ => {
-    console.log("Move to full screen");
-
-    canvas.webkitRequestFullScreen();
+    goFullscreen(canvas);
   });
-} else {
-  console.log("Could not find full screen button")
 }
