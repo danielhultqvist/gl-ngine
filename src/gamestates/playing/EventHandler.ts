@@ -2,17 +2,21 @@ import {KeyState} from "./KeyState";
 import {Player} from "../../player/Player";
 
 export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
-  switch (e.key) {
+  switch (e.code) {
     case "ArrowLeft":
+    case "KeyA":
       e.preventDefault();
       state.left = true;
       break;
     case "ArrowUp":
+    case "Space":
+    case "KeyW":
       e.preventDefault();
       player.dy = -7;
       state.up = true;
       break;
     case "ArrowRight":
+    case "KeyD":
       e.preventDefault();
       state.right = true;
       break;
@@ -20,16 +24,19 @@ export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player
 }
 
 export function keyUpHandler(e: KeyboardEvent, state: KeyState) {
-  switch (e.key) {
+  switch (e.code) {
     case "ArrowLeft":
+    case "KeyA":
       e.preventDefault();
       state.left = false;
       break;
     case "ArrowUp":
+    case "KeyW":
       e.preventDefault();
       state.up = false;
       break;
     case "ArrowRight":
+    case "KeyD":
       e.preventDefault();
       state.right = false;
       break;
