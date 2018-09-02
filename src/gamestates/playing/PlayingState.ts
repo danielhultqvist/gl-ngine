@@ -12,6 +12,8 @@ import {MAP_4} from "../../map/StandardMaps";
 import {NoopState} from "../NoopState";
 import {MainMenuState} from "../MainMenuState";
 import {EventListener} from "../../events/EventListener";
+import {RenderContext} from "../../rendering/RenderContext";
+import {CanvasRenderContext} from "../../rendering/canvas/CanvasRenderContext";
 
 class PlayingState implements GameState {
 
@@ -22,6 +24,7 @@ class PlayingState implements GameState {
   private readonly player: Player;
   private readonly map: Map;
   private readonly keyState = new KeyState();
+  private readonly renderContext: RenderContext;
 
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
@@ -30,6 +33,7 @@ class PlayingState implements GameState {
   constructor() {
     this.player = new Player(325, 25, 0, 20);
     this.map = MapLoader.load(MAP_4);
+    this.renderContext = new CanvasRenderContext();
   }
 
   public id(): StateId {
@@ -41,6 +45,7 @@ class PlayingState implements GameState {
   }
 
   public render(canvas: HTMLCanvasElement): void {
+    console.log(this.renderContext);
     this.map.render(canvas);
     this.player.render(canvas);
   }
@@ -87,8 +92,8 @@ class PlayingState implements GameState {
     let topCollision: boolean = false;
 
     // Temp to not fall out
-    if (this.player.y > 768 - this.player.height) {
-      this.player.y = 768 - this.player.height;
+    if (this.player.y > this.map.height - this.player.height) {
+      this.player.y = this.map.height - this.player.height;
       this.player.dy = 0;
       bottomCollision = true;
     } else if (this.player.y < 0) {
@@ -96,8 +101,8 @@ class PlayingState implements GameState {
       this.player.dy = 0;
       bottomCollision = true;
     }
-    if (this.player.x > 1024 - this.player.width) {
-      this.player.x = 1024 - this.player.width;
+    if (this.player.x > this.map.width - this.player.width) {
+      this.player.x = this.map.width - this.player.width;
       this.player.dx = 0;
     } else if (this.player.x < 0) {
       this.player.x = 0;

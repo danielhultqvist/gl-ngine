@@ -24,8 +24,6 @@ class Main {
   private readonly canvas: HTMLCanvasElement;
   private currentGameState: GameState = new MainMenuState();
 
-  // private currentGameState: GameState = new PlayingState();
-
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
   }

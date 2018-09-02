@@ -1,5 +1,7 @@
+import {RenderContext} from "./RenderContext";
+
 interface Renderable {
-  render(canvas: HTMLCanvasElement): void;
+  render(renderContext: RenderContext): void;
 }
 
 export {Renderable}
