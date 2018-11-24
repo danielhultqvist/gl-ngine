@@ -27,7 +27,7 @@ function collidingAxis(axes: Axis[], player: Player, polygon: Polygon): Collisio
   for (let i = 0; i < axes.length; ++i) {
     const axis: Axis = axes[i];
     const normal: Axis = new Axis(-axis.dy, axis.dx).normalized();
-    const playerProjection: Projection = project(normal, player.coordinates());
+    const playerProjection: Projection = project(normal, player.hitbox());
     const objectProjection: Projection = project(normal, polygon.coordinates);
 
     if (playerProjection.overlap(objectProjection)) {
@@ -77,7 +77,7 @@ function project(normal: Axis, coordinates: Coordinate[]): Projection {
 class CollisionDetector {
   public detect(player: Player, mapObjects: MapObject[]): CollisionVector[] {
     const collisionVectors: CollisionVector[] = [];
-    const playerAxes: Axis[] = axes(player.coordinates());
+    const playerAxes: Axis[] = axes(player.hitbox());
 
     mapObjects.map(o => {
       o.polygons.forEach(p => {

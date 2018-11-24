@@ -2,6 +2,8 @@ import {Polygon} from "../geometry/Polygon";
 import {Coordinate} from "../geometry/Coordinate";
 import {PolygonDecomposer} from "../collisiondetection/PolygonDecomposer";
 import {Renderable} from "../rendering/Renderable";
+import {RenderContext} from "../rendering/RenderContext";
+import {Color} from "../rendering/Color";
 
 function randomColor() {
   const letters = '0123456789ABCDEF';
@@ -23,38 +25,8 @@ class MapObject implements Renderable {
     this.vertices = polygon.coordinates;
   }
 
-  public render(canvas: HTMLCanvasElement): void {
-    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.fillStyle = "#00c30f";
-    ctx.moveTo(this.vertices[0].x, this.vertices[0].y);
-    for (let i: number = 1; i < this.vertices.length; ++i) {
-      ctx.lineTo(this.vertices[i].x, this.vertices[i].y);
-    }
-    ctx.fill();
-    ctx.restore();
-
-    this.renderGrass(ctx);
-  }
-
-  private renderGrass(ctx: CanvasRenderingContext2D): void {
-    ctx.save();
-
-    for (let i = 0; i < this.vertices.length; ++i) {
-      if (this.vertices[i].x < this.vertices[(i + 1) % this.vertices.length].x) {
-        ctx.beginPath();
-        ctx.moveTo(this.vertices[i].x, this.vertices[i].y);
-        ctx.lineTo(this.vertices[(i + 1) % this.vertices.length].x,
-          this.vertices[(i + 1) % this.vertices.length].y);
-        ctx.lineWidth = 10;
-        ctx.strokeStyle = "#008e0b";
-        ctx.stroke();
-      }
-    }
-
-    ctx.restore();
+  public render(context: RenderContext): void {
+    context.drawObject(this.vertices, new Color("#00c30f"));
   }
 }
 

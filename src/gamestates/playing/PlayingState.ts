@@ -12,7 +12,6 @@ import {MAP_4} from "../../map/StandardMaps";
 import {NoopState} from "../NoopState";
 import {MainMenuState} from "../MainMenuState";
 import {EventListener} from "../../events/EventListener";
-import {RenderContext} from "../../rendering/RenderContext";
 import {CanvasRenderContext} from "../../rendering/canvas/CanvasRenderContext";
 
 class PlayingState implements GameState {
@@ -24,7 +23,6 @@ class PlayingState implements GameState {
   private readonly player: Player;
   private readonly map: Map;
   private readonly keyState = new KeyState();
-  private readonly renderContext: RenderContext;
 
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
@@ -33,7 +31,6 @@ class PlayingState implements GameState {
   constructor() {
     this.player = new Player(325, 25, 0, 20);
     this.map = MapLoader.load(MAP_4);
-    this.renderContext = new CanvasRenderContext();
   }
 
   public id(): StateId {
@@ -45,9 +42,9 @@ class PlayingState implements GameState {
   }
 
   public render(canvas: HTMLCanvasElement): void {
-    console.log(this.renderContext);
-    this.map.render(canvas);
-    this.player.render(canvas);
+    const renderContext = new CanvasRenderContext(canvas);
+    this.map.render(renderContext);
+    this.player.render(renderContext);
   }
 
   public setup(): void {

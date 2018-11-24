@@ -24,7 +24,7 @@ test('push player to the left of colliding object', () => {
 
   expect(detection)
     .toEqual([
-      new CollisionVector(new Axis(-1, 0), player.width)
+      new CollisionVector(new Axis(-1, 0), player.width - player.widthMargin / 2)
     ]);
 });
 
@@ -45,7 +45,7 @@ test('push player to the right of colliding object', () => {
 
   expect(detection)
     .toEqual([
-      new CollisionVector(new Axis(1, 0), 40)
+      new CollisionVector(new Axis(1, 0), 40 - player.widthMargin / 2)
     ]);
 });
 
@@ -66,7 +66,7 @@ test('push player upwards of colliding object', () => {
 
   expect(detection)
     .toEqual([
-      new CollisionVector(new Axis(0, -1), 5)
+      new CollisionVector(new Axis(0, -1), player.height / 5 - player.heightMargin / 2)
     ]);
 });
 
@@ -87,7 +87,7 @@ test('push player downwards of colliding object', () => {
 
   expect(detection)
     .toEqual([
-      new CollisionVector(new Axis(0, 1), 5)
+      new CollisionVector(new Axis(0, 1), player.height / 5 - player.heightMargin / 2)
     ]);
 });
 
@@ -105,9 +105,7 @@ test('push player diagonally of colliding object', () => {
 
   const detection: CollisionVector[] = detector.detect(player, mapObjects);
   const expectedAxis = new Axis(1, 1).normalized();
-  const expectedMagnitude = (10 / expectedAxis.dx).toFixed(5);
 
   expect(detection.length).toBe(1);
   expect(detection[0].vector).toEqual(expectedAxis);
-  expect(detection[0].magnitude.toFixed(5)).toEqual(expectedMagnitude);
 });

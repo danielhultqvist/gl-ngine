@@ -3,6 +3,7 @@ import {Renderable} from "../rendering/Renderable";
 import {MovementState} from "./MovementState";
 import {AssetStore} from "../assets/AssetStore";
 import {Direction} from "./Direction";
+import {RenderContext} from "../rendering/RenderContext";
 
 class Player implements Renderable {
   private static readonly MAX_ANIMATION = 10 * 9;
@@ -28,10 +29,10 @@ class Player implements Renderable {
     this.dy = dy;
   }
 
-  public coordinates(): Coordinate[] {
+  public hitbox(): Coordinate[] {
     return [
       new Coordinate(this.x + this.widthMargin / 2, this.y + this.heightMargin / 2),
-      new Coordinate(this.x + this.width - this.widthMargin / 2, this.y  + this.heightMargin / 2),
+      new Coordinate(this.x + this.width - this.widthMargin / 2, this.y + this.heightMargin / 2),
       new Coordinate(this.x + this.width - this.widthMargin / 2, this.y + this.height - this.heightMargin / 2),
       new Coordinate(this.x + this.widthMargin / 2, this.y + this.height - this.heightMargin / 2),
     ];
@@ -56,10 +57,7 @@ class Player implements Renderable {
     }
   }
 
-  public render(canvas: HTMLCanvasElement): void {
-    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
-
-    ctx.save();
+  public render(renderContext: RenderContext): void {
     const srcX = Math.floor(this.animationFrame / 10) * this.width;
     const srcY = (this.movementState * 2 + this.direction) * this.height;
     const srcW = this.width;
@@ -69,11 +67,10 @@ class Player implements Renderable {
     const dstW = this.width;
     const dstH = this.height;
 
-    ctx.drawImage(
+    renderContext.drawPartialImage(
       AssetStore.get("characters-wizard"),
       srcX, srcY, srcW, srcH,
       dstX, dstY, dstW, dstH);
-    ctx.restore();
   }
 
   public getCenter(): Coordinate {

@@ -1,7 +1,7 @@
 import {Coordinate} from "../../src/geometry/Coordinate";
 import {determinant, left, leftOn, right, rightOn} from "../../src/geometry/Algebra";
 
-test('calculate determinant for counter clockwise coordinates', () => {
+test('calculate determinant for counter clockwise hitbox', () => {
   const coordinate1: Coordinate = new Coordinate(0, 0);
   const coordinate2: Coordinate = new Coordinate(1, 0);
   const coordinate3: Coordinate = new Coordinate(0, 2);
@@ -12,7 +12,7 @@ test('calculate determinant for counter clockwise coordinates', () => {
     .toEqual(1);
 });
 
-test('calculate determinant for clockwise coordinates', () => {
+test('calculate determinant for clockwise hitbox', () => {
   const coordinate1: Coordinate = new Coordinate(0, 0);
   const coordinate2: Coordinate = new Coordinate(0, 2);
   const coordinate3: Coordinate = new Coordinate(1, 0);

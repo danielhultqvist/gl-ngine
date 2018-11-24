@@ -48,7 +48,7 @@ export function leftOn(start: Coordinate, testCoordinate: Coordinate, stop: Coor
 /**
  * Calculate the determinant (area) of a triangle based on two vectors in a counter clockwise
  * coordinate system. c must be after b which must be after a in the coordinate system
- * The coordinates are extended to homogenous coordinates which allows calculating the
+ * The hitbox are extended to homogenous hitbox which allows calculating the
  * determinant using
  * | a.x  a.y  1 |
  * | b.x  b.y  1 |
