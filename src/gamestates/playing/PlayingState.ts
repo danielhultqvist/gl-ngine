@@ -6,7 +6,7 @@ import {Player} from "../../player/Player";
 import {KeyState} from "./KeyState";
 import {CollisionVector} from "../../collisiondetection/CollisionVector";
 import {CollisionDetector} from "../../collisiondetection/CollisionDetector";
-import {mouseDownHandler, keyDownHandler, keyUpHandler} from "./EventHandler";
+import {keyDownHandler, keyUpHandler, mouseDownHandler, mouseMoveHandler} from "./EventHandler";
 import {MapLoader} from "../../map/MapLoader";
 import {MAP_4} from "../../map/StandardMaps";
 import {NoopState} from "../NoopState";
@@ -15,6 +15,8 @@ import {EventListener} from "../../events/EventListener";
 import {CanvasRenderContext} from "../../rendering/canvas/CanvasRenderContext";
 import {Viewport} from "../../rendering/Viewport";
 import {RenderContext} from "../../rendering/RenderContext";
+import {MouseState} from "./MouseState";
+import {clampAbsolute} from "../../util/MathUtils";
 
 class PlayingState implements GameState {
 
@@ -25,6 +27,7 @@ class PlayingState implements GameState {
   private readonly player: Player;
   private readonly map: Map;
   private readonly keyState = new KeyState();
+  private readonly mouseState = new MouseState(0, 0);
 
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
@@ -61,7 +64,12 @@ class PlayingState implements GameState {
         }
       }),
       new EventListener("keyup", (e: KeyboardEvent) => keyUpHandler(e, this.keyState)),
-      new EventListener("mousedown", (e: MouseEvent) => mouseDownHandler(e, this.player, this.viewport(canvas)))
+      new EventListener("mousedown",
+        (e: MouseEvent) => mouseDownHandler(e, this.player, this.viewport(canvas))),
+      new EventListener("mousemove",
+        (e: MouseEvent) => {
+          mouseMoveHandler(e, this.mouseState);
+        }),
     );
 
     this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
@@ -142,8 +150,11 @@ class PlayingState implements GameState {
     const viewportWidth = canvas.width;
     const viewportHeight = canvas.height;
 
-    const x = Math.max(0, this.player.getCenter().x - viewportWidth / 2);
-    const y = Math.max(0, this.player.getCenter().y - viewportHeight * 2 / 3);
+    const mouseOffsetX = clampAbsolute(viewportWidth / 4, viewportWidth / 2 - this.mouseState.relativeX);
+    const mouseOffsetY = clampAbsolute(viewportHeight / 4, viewportHeight / 2 - this.mouseState.relativeY);
+
+    const x = Math.max(0, this.player.getCenter().x - viewportWidth / 2 - mouseOffsetX);
+    const y = Math.max(0, this.player.getCenter().y - viewportHeight / 2 - mouseOffsetY);
 
     return new Viewport(x, y, viewportWidth, viewportHeight)
   }

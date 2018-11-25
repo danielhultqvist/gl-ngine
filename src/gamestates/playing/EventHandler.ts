@@ -2,6 +2,7 @@ import {KeyState} from "./KeyState";
 import {Player} from "../../player/Player";
 import {Viewport} from "../../rendering/Viewport";
 import {Log} from "../../util/Log";
+import {MouseState} from "./MouseState";
 
 export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
   switch (e.code) {
@@ -57,4 +58,8 @@ export function mouseDownHandler(e: MouseEvent, player: Player, viewport: Viewpo
       Log.log(`new Coordinate(${Math.round(e.offsetX + viewport.x)}, ${Math.round(e.offsetY + viewport.y)}),`);
       break;
   }
+}
+
+export function mouseMoveHandler(e: MouseEvent, mouseState: MouseState) {
+  mouseState.update(e.clientX, e.clientY);
 }

@@ -64,8 +64,10 @@ class Main {
 
   private static prepareCanvas(): void {
     (<Element>document.getElementById("loading")).remove();
-    canvas.width = 1024*2;
-    canvas.height = 768*2;
+    canvas.width = 1600;
+    canvas.height = 900;
+    canvas.oncontextmenu = () => false;
+    canvas.style.cursor = "crosshair";
     canvas.focus();
   }
 
@@ -103,5 +105,4 @@ if (fullscreenButton != null) {
 }
 
 const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
-canvas.oncontextmenu = () => false;
 new Main(canvas).start();
