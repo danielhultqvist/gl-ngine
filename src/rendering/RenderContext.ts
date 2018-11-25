@@ -1,4 +1,5 @@
 import {Coordinate} from "../geometry/Coordinate";
+import {Color} from "./Color";
 
 interface RenderContext {
   clear(): void;

@@ -13,6 +13,8 @@ import {NoopState} from "../NoopState";
 import {MainMenuState} from "../MainMenuState";
 import {EventListener} from "../../events/EventListener";
 import {CanvasRenderContext} from "../../rendering/canvas/CanvasRenderContext";
+import {Viewport} from "../../rendering/Viewport";
+import {RenderContext} from "../../rendering/RenderContext";
 
 class PlayingState implements GameState {
 
@@ -42,23 +44,23 @@ class PlayingState implements GameState {
   }
 
   public render(canvas: HTMLCanvasElement): void {
-    const renderContext = new CanvasRenderContext(canvas);
+    const viewport: Viewport = this.viewport();
+    const renderContext: RenderContext = new CanvasRenderContext(canvas, viewport);
+
     this.map.render(renderContext);
     this.player.render(renderContext);
   }
 
   public setup(): void {
-    const keystate = this.keyState;
-
     this.eventListeners.push(
-      new EventListener("keydown", (e: KeyboardEvent) => keyDownHandler(e, keystate, this.player)),
+      new EventListener("keydown", (e: KeyboardEvent) => keyDownHandler(e, this.keyState, this.player)),
       new EventListener("keydown", (e: KeyboardEvent) => {
         if (e.key == 'm') {
           this.nextState = MainMenuState.ID;
         }
       }),
-      new EventListener("keyup", (e: KeyboardEvent) => keyUpHandler(e, keystate)),
-      new EventListener("click", (e: MouseEvent) => click(e, this.player))
+      new EventListener("keyup", (e: KeyboardEvent) => keyUpHandler(e, this.keyState)),
+      new EventListener("click", (e: MouseEvent) => click(e, this.player, this.viewport()))
     );
 
     this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
@@ -70,38 +72,34 @@ class PlayingState implements GameState {
 
   public update(deltaTime: number): void {
     this.handleEvents(deltaTime);
-    let {bottomCollision, topCollision} = this.handleCollisions();
+    const {bottomCollision, topCollision} = this.handleCollisions();
 
-    if (bottomCollision) {
+    Gravity.apply(this.player, deltaTime);
+    if (bottomCollision || topCollision) {
       this.player.dy = 0;
-    } else {
-      if (topCollision) {
-        this.player.dy = 0;
-      }
-      Gravity.apply(this.player, deltaTime);
     }
 
     this.player.update();
   }
 
-  private handleCollisions() {
+  private handleCollisions(): any {
     let bottomCollision: boolean = false;
     let topCollision: boolean = false;
 
-    // Temp to not fall out
-    if (this.player.y > this.map.height - this.player.height) {
-      this.player.y = this.map.height - this.player.height;
+    // <Temp to not fall out
+    if (this.player.y > this.map.boundary.bottomRight.y - this.player.height) {
+      this.player.y = this.map.boundary.bottomRight.y - this.player.height;
       this.player.dy = 0;
       bottomCollision = true;
-    } else if (this.player.y < 0) {
+    } else if (this.player.y < this.map.boundary.topLeft.y) {
       this.player.y = 0;
       this.player.dy = 0;
       bottomCollision = true;
     }
-    if (this.player.x > this.map.width - this.player.width) {
-      this.player.x = this.map.width - this.player.width;
+    if (this.player.x > this.map.boundary.bottomRight.x - this.player.width) {
+      this.player.x = this.map.boundary.bottomRight.x - this.player.width;
       this.player.dx = 0;
-    } else if (this.player.x < 0) {
+    } else if (this.player.x < this.map.boundary.topLeft.x) {
       this.player.x = 0;
       this.player.dx = 0;
     }
@@ -125,7 +123,7 @@ class PlayingState implements GameState {
     return {bottomCollision, topCollision};
   }
 
-  private handleEvents(deltaTime: number) {
+  private handleEvents(deltaTime: number): void {
     if (this.keyState.left && this.keyState.right) {
       this.player.dx = 0;
     } else if (this.keyState.left) {
@@ -138,6 +136,16 @@ class PlayingState implements GameState {
 
     this.player.x = this.player.x + this.player.dx;
     this.player.y = this.player.y + this.player.dy;
+  }
+
+  private viewport(): Viewport {
+    const viewportWidth = 1024;
+    const viewportHeight = 768;
+
+    const x = Math.max(0, this.player.getCenter().x - viewportWidth / 2);
+    const y = Math.max(0, this.player.getCenter().y - viewportHeight * 2 / 3);
+
+    return new Viewport(x, y, viewportWidth, viewportHeight)
   }
 }
 

@@ -1,5 +1,6 @@
 import {KeyState} from "./KeyState";
 import {Player} from "../../player/Player";
+import {Viewport} from "../../rendering/Viewport";
 
 export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
   switch (e.code) {
@@ -43,9 +44,9 @@ export function keyUpHandler(e: KeyboardEvent, state: KeyState) {
   }
 }
 
-export function click(e: MouseEvent, player: Player) {
-  player.x = e.offsetX;
-  player.y = e.offsetY;
+export function click(e: MouseEvent, player: Player, viewport: Viewport) {
+  player.x = e.offsetX + viewport.x;
+  player.y = e.offsetY + viewport.y;
   player.dx = 0;
   player.dy = 0;
   console.log(`Teleported to: (${e.offsetX}, ${e.offsetY})`);
