@@ -45,10 +45,16 @@ export function keyUpHandler(e: KeyboardEvent, state: KeyState) {
   }
 }
 
-export function click(e: MouseEvent, player: Player, viewport: Viewport) {
-  player.x = e.offsetX + viewport.x;
-  player.y = e.offsetY + viewport.y;
-  player.dx = 0;
-  player.dy = 0;
-  Log.log(`Teleported to: (${e.offsetX}, ${e.offsetY})`);
+export function mouseDownHandler(e: MouseEvent, player: Player, viewport: Viewport) {
+  switch (e.button) {
+    case 0:
+      player.x = e.offsetX + viewport.x;
+      player.y = e.offsetY + viewport.y;
+      player.dx = 0;
+      player.dy = 0;
+      break;
+    case 2:
+      Log.log(`new Coordinate(${Math.round(e.offsetX + viewport.x)}, ${Math.round(e.offsetY + viewport.y)}),`);
+      break;
+  }
 }

@@ -1,5 +1,5 @@
 class Log {
-  static active: boolean = false;
+  static active: boolean = true;
 
   public static log(message: string) {
     if (this.active) {

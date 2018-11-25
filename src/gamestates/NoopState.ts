@@ -17,7 +17,7 @@ class NoopState implements GameState {
     throw new Error("Render called in NoopState");
   }
 
-  setup(): void {
+  setup(_: HTMLCanvasElement): void {
     throw new Error("Setup called in NoopState");
   }
 

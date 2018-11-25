@@ -31,7 +31,7 @@ class Main {
   public start(): void {
     AssetLoader.load(ALL_ASSETS, () => {
       Main.prepareCanvas();
-      this.currentGameState.setup();
+      this.currentGameState.setup(this.canvas);
       requestAnimationFrame(this.loop);
     });
   }
@@ -64,8 +64,8 @@ class Main {
 
   private static prepareCanvas(): void {
     (<Element>document.getElementById("loading")).remove();
-    canvas.width = 1024;
-    canvas.height = 768;
+    canvas.width = 1024*2;
+    canvas.height = 768*2;
     canvas.focus();
   }
 
@@ -89,7 +89,7 @@ class Main {
 
     if (nextState != null) {
       this.currentGameState.teardown();
-      nextState.setup();
+      nextState.setup(this.canvas);
       this.currentGameState = nextState;
     }
   }
@@ -103,4 +103,5 @@ if (fullscreenButton != null) {
 }
 
 const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
+canvas.oncontextmenu = () => false;
 new Main(canvas).start();

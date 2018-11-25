@@ -20,7 +20,7 @@ class MainMenuState implements GameState {
   }
 
   public render(canvas: HTMLCanvasElement): void {
-    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> canvas.getContext("2d");
+    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D>canvas.getContext("2d");
 
     const fontSize: number = Math.floor(canvas.width / 30);
 
@@ -37,7 +37,7 @@ class MainMenuState implements GameState {
     ctx.restore()
   }
 
-  public setup(): void {
+  public setup(_: HTMLCanvasElement): void {
     this.eventListeners.push(
       new EventListener("keydown", (e: KeyboardEvent) => {
         e.preventDefault();

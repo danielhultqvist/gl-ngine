@@ -6,7 +6,7 @@ import {Player} from "../../player/Player";
 import {KeyState} from "./KeyState";
 import {CollisionVector} from "../../collisiondetection/CollisionVector";
 import {CollisionDetector} from "../../collisiondetection/CollisionDetector";
-import {click, keyDownHandler, keyUpHandler} from "./EventHandler";
+import {mouseDownHandler, keyDownHandler, keyUpHandler} from "./EventHandler";
 import {MapLoader} from "../../map/MapLoader";
 import {MAP_4} from "../../map/StandardMaps";
 import {NoopState} from "../NoopState";
@@ -44,23 +44,24 @@ class PlayingState implements GameState {
   }
 
   public render(canvas: HTMLCanvasElement): void {
-    const viewport: Viewport = this.viewport();
+    const viewport: Viewport = this.viewport(canvas);
     const renderContext: RenderContext = new CanvasRenderContext(canvas, viewport);
 
     this.map.render(renderContext);
     this.player.render(renderContext);
   }
 
-  public setup(): void {
+  public setup(canvas: HTMLCanvasElement): void {
     this.eventListeners.push(
-      new EventListener("keydown", (e: KeyboardEvent) => keyDownHandler(e, this.keyState, this.player)),
+      new EventListener("keydown", (e: KeyboardEvent) =>
+        keyDownHandler(e, this.keyState, this.player)),
       new EventListener("keydown", (e: KeyboardEvent) => {
         if (e.key == 'm') {
           this.nextState = MainMenuState.ID;
         }
       }),
       new EventListener("keyup", (e: KeyboardEvent) => keyUpHandler(e, this.keyState)),
-      new EventListener("click", (e: MouseEvent) => click(e, this.player, this.viewport()))
+      new EventListener("mousedown", (e: MouseEvent) => mouseDownHandler(e, this.player, this.viewport(canvas)))
     );
 
     this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
@@ -86,7 +87,6 @@ class PlayingState implements GameState {
     let bottomCollision: boolean = false;
     let topCollision: boolean = false;
 
-    // <Temp to not fall out
     if (this.player.y > this.map.boundary.bottomRight.y - this.player.height) {
       this.player.y = this.map.boundary.bottomRight.y - this.player.height;
       this.player.dy = 0;
@@ -138,9 +138,9 @@ class PlayingState implements GameState {
     this.player.y = this.player.y + this.player.dy;
   }
 
-  private viewport(): Viewport {
-    const viewportWidth = 1024;
-    const viewportHeight = 768;
+  private viewport(canvas: HTMLCanvasElement): Viewport {
+    const viewportWidth = canvas.width;
+    const viewportHeight = canvas.height;
 
     const x = Math.max(0, this.player.getCenter().x - viewportWidth / 2);
     const y = Math.max(0, this.player.getCenter().y - viewportHeight * 2 / 3);
