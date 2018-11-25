@@ -95,15 +95,12 @@ class Main {
   }
 }
 
-const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
-new Main(canvas).start();
-
-/**
- Temp stuff
- */
 const fullscreenButton = document.getElementById("full-screen");
 if (fullscreenButton != null) {
   fullscreenButton.addEventListener("click", _ => {
     goFullscreen(canvas);
   });
 }
+
+const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("game-canvas");
+new Main(canvas).start();

@@ -1,15 +1,16 @@
 import {Asset} from "./Asset";
 import {AssetStore} from "./AssetStore";
+import {Log} from "../util/Log";
 
 class AssetLoader {
 
   public static load(assets: Asset[], callback: () => void) {
-    console.log("START: Loading assets");
+    Log.log("START: Loading assets");
     let resourcesLoaded = 0;
     const checkReadyToLaunch = () => {
       resourcesLoaded += 1;
       if (resourcesLoaded === assets.length) {
-        console.log("DONE: Assets loaded, starting game");
+        Log.log("DONE: Assets loaded, starting game");
         callback();
       }
     };

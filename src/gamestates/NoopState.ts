@@ -28,7 +28,6 @@ class NoopState implements GameState {
   update(_: number): void {
     throw new Error("Update called in NoopState");
   }
-
 }
 
 export {NoopState}
