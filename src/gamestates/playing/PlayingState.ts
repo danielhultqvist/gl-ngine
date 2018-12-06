@@ -28,6 +28,7 @@ class PlayingState implements GameState {
   private readonly map: Map;
   private readonly keyState = new KeyState();
   private readonly mouseState = new MouseState(0, 0);
+  private readonly viewport: Viewport;
 
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
@@ -36,6 +37,7 @@ class PlayingState implements GameState {
   constructor() {
     this.player = new Player(325, 25, 0, 20);
     this.map = MapLoader.load(MAP_4);
+    this.viewport = new Viewport(0, 0, 100, 100);
   }
 
   public id(): StateId {
@@ -47,14 +49,16 @@ class PlayingState implements GameState {
   }
 
   public render(canvas: HTMLCanvasElement): void {
-    const viewport: Viewport = this.viewport(canvas);
-    const renderContext: RenderContext = new CanvasRenderContext(canvas, viewport);
+    this.translateViewport(canvas);
+    const renderContext: RenderContext = new CanvasRenderContext(canvas, this.viewport);
 
     this.map.render(renderContext);
     this.player.render(renderContext);
   }
 
   public setup(canvas: HTMLCanvasElement): void {
+    this.viewport.rescale(canvas.width, canvas.height);
+
     this.eventListeners.push(
       new EventListener("keydown", (e: KeyboardEvent) =>
         keyDownHandler(e, this.keyState, this.player)),
@@ -65,7 +69,7 @@ class PlayingState implements GameState {
       }),
       new EventListener("keyup", (e: KeyboardEvent) => keyUpHandler(e, this.keyState)),
       new EventListener("mousedown",
-        (e: MouseEvent) => mouseDownHandler(e, this.player, this.viewport(canvas))),
+        (e: MouseEvent) => mouseDownHandler(e, this.player, this.viewport)),
       new EventListener("mousemove",
         (e: MouseEvent) => {
           mouseMoveHandler(e, this.mouseState);
@@ -146,7 +150,7 @@ class PlayingState implements GameState {
     this.player.y = this.player.y + this.player.dy;
   }
 
-  private viewport(canvas: HTMLCanvasElement): Viewport {
+  private translateViewport(canvas: HTMLCanvasElement): void {
     const viewportWidth = canvas.width;
     const viewportHeight = canvas.height;
 
@@ -156,7 +160,15 @@ class PlayingState implements GameState {
     const x = Math.max(0, this.player.getCenter().x - viewportWidth / 2 - mouseOffsetX);
     const y = Math.max(0, this.player.getCenter().y - viewportHeight / 2 - mouseOffsetY);
 
-    return new Viewport(x, y, viewportWidth, viewportHeight)
+    const dx = this.viewport.x - x;
+    const dy = this.viewport.y - y;
+
+    const clampedDx = clampAbsolute(20, dx);
+    const clampedDy = clampAbsolute(20, dy);
+
+    console.log(`dx: ${clampedDx}, dy: ${clampedDy}`);
+
+    this.viewport.translate(this.viewport.x - clampedDx, this.viewport.y - clampedDy);
   }
 }
 
