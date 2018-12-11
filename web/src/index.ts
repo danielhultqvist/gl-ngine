@@ -10,6 +10,10 @@ const ALL_ASSETS = [
     "characters-wizard",
     new URL("http://hulkfisk.com/game/assets/characters/wizard/wizard3.png")
   ),
+  new Asset(
+    "spells-fireball",
+    new URL("http://hulkfisk.com/game/assets/spells/fireball.png")
+  ),
   new Asset("map-layers-1", new URL("http://hulkfisk.com/game/assets/map/layers/1.png")),
   new Asset("map-layers-2", new URL("http://hulkfisk.com/game/assets/map/layers/2.png")),
   new Asset("map-layers-3", new URL("http://hulkfisk.com/game/assets/map/layers/3.png")),

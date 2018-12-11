@@ -17,6 +17,7 @@ import {Viewport} from "../../rendering/Viewport";
 import {RenderContext} from "../../rendering/RenderContext";
 import {MouseState} from "./MouseState";
 import {clampAbsolute} from "../../util/MathUtils";
+import {Item} from "../../spells/Item";
 
 class PlayingState implements GameState {
 
@@ -29,6 +30,7 @@ class PlayingState implements GameState {
   private readonly keyState = new KeyState();
   private readonly mouseState = new MouseState(0, 0);
   private readonly viewport: Viewport;
+  private readonly items: Item[];
 
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
@@ -38,6 +40,7 @@ class PlayingState implements GameState {
     this.player = new Player(325, 25, 0, 20);
     this.map = MapLoader.load(MAP_4);
     this.viewport = new Viewport(0, 0, 100, 100);
+    this.items = [];
   }
 
   public id(): StateId {
@@ -54,6 +57,7 @@ class PlayingState implements GameState {
 
     this.map.render(renderContext);
     this.player.render(renderContext);
+    this.items.forEach(item => item.render(renderContext))
   }
 
   public setup(canvas: HTMLCanvasElement): void {
@@ -69,7 +73,7 @@ class PlayingState implements GameState {
       }),
       new EventListener("keyup", (e: KeyboardEvent) => keyUpHandler(e, this.keyState)),
       new EventListener("mousedown",
-        (e: MouseEvent) => mouseDownHandler(e, this.player, this.viewport)),
+        (e: MouseEvent) => mouseDownHandler(e, this.player, this.viewport, this.items)),
       new EventListener("mousemove",
         (e: MouseEvent) => {
           mouseMoveHandler(e, this.mouseState);
@@ -93,6 +97,7 @@ class PlayingState implements GameState {
     }
 
     this.player.update();
+    this.items.forEach(item => item.update())
   }
 
   private handleCollisions(): any {
@@ -165,8 +170,6 @@ class PlayingState implements GameState {
 
     const clampedDx = clampAbsolute(20, dx);
     const clampedDy = clampAbsolute(20, dy);
-
-    console.log(`dx: ${clampedDx}, dy: ${clampedDy}`);
 
     this.viewport.translate(this.viewport.x - clampedDx, this.viewport.y - clampedDy);
   }

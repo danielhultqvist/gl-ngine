@@ -4,8 +4,9 @@ import {MovementState} from "./MovementState";
 import {AssetStore} from "../assets/AssetStore";
 import {Direction} from "./Direction";
 import {RenderContext} from "../rendering/RenderContext";
+import {Updateable} from "../rendering/Updateable";
 
-class Player implements Renderable {
+class Player implements Renderable, Updateable {
   private static readonly MAX_ANIMATION = 10 * 9;
 
   x: number;

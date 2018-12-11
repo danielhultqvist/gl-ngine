@@ -3,6 +3,8 @@ import {Player} from "../../player/Player";
 import {Viewport} from "../../rendering/Viewport";
 import {Log} from "../../util/Log";
 import {MouseState} from "./MouseState";
+import {Item} from "../../spells/Item";
+import {Fireball} from "../../spells/Fireball";
 
 export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
   switch (e.code) {
@@ -46,16 +48,22 @@ export function keyUpHandler(e: KeyboardEvent, state: KeyState) {
   }
 }
 
-export function mouseDownHandler(e: MouseEvent, player: Player, viewport: Viewport) {
+export function mouseDownHandler(e: MouseEvent, player: Player, viewport: Viewport, items: Item[]) {
+  const screenX = Math.round(e.offsetX + viewport.x);
+  const screenY = Math.round(e.offsetY + viewport.y);
   switch (e.button) {
     case 0:
-      player.x = e.offsetX + viewport.x;
-      player.y = e.offsetY + viewport.y;
+      Log.log(`Placing item at ${screenX}, ${screenY}`);
+      items.push(new Fireball(screenX, screenY, 0, 0));
+      break;
+    case 1:
+      player.x = screenX;
+      player.y = screenY;
       player.dx = 0;
       player.dy = 0;
       break;
     case 2:
-      Log.log(`new Coordinate(${Math.round(e.offsetX + viewport.x)}, ${Math.round(e.offsetY + viewport.y)}),`);
+      Log.log(`new Coordinate(${screenX}, ${screenY}),`);
       break;
   }
 }
