@@ -35,6 +35,7 @@ class PlayingState implements GameState {
   private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
   private eventListeners: EventListener[] = [];
+  private socket: WebSocket | null = null;
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
@@ -81,6 +82,9 @@ class PlayingState implements GameState {
     );
 
     this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
+    this.socket = new WebSocket("ws://" + location.hostname + ":" + 8080 + "/join");
+    this.socket.onmessage = msg => console.log(msg);
+    this.socket.onclose = () => alert("WebSocket connection closed");
   }
 
   public teardown(): void {
