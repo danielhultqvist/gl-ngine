@@ -36,12 +36,17 @@ class PlayingState implements GameState {
   private collisionDetector: CollisionDetector = new CollisionDetector();
   private eventListeners: EventListener[] = [];
   private socket: WebSocket | null = null;
+  private allPlayers: Player[];
+
+  private sendLoopId: number = -1;
+  private static SEND_UPDATE_RATE: number = 1000/50;
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
     this.map = MapLoader.load(MAP_4);
     this.viewport = new Viewport(0, 0, 100, 100);
     this.items = [];
+    this.allPlayers = [];
   }
 
   public id(): StateId {
@@ -57,8 +62,11 @@ class PlayingState implements GameState {
     const renderContext: RenderContext = new CanvasRenderContext(canvas, this.viewport);
 
     this.map.render(renderContext);
-    this.player.render(renderContext);
-    this.items.forEach(item => item.render(renderContext))
+    // this.player.render(renderContext);
+    this.items.forEach(item => item.render(renderContext));
+    this.allPlayers.forEach(player => {
+      player.render(renderContext);
+    })
   }
 
   public setup(canvas: HTMLCanvasElement): void {
@@ -83,12 +91,23 @@ class PlayingState implements GameState {
 
     this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
     this.socket = new WebSocket("ws://" + location.hostname + ":" + 8080 + "/join");
-    this.socket.onmessage = msg => console.log(msg);
+    this.socket.onmessage = msg => this.handleMessage(msg);
+    this.socket.onopen = () => {
+      this.socket!.send(JSON.stringify({
+          messageType: "register",
+          data: {
+            username: "Player 1"
+          }
+        }
+      ));
+      this.sendLoopId = window.setInterval(this.sendUpdate.bind(this), PlayingState.SEND_UPDATE_RATE);
+    };
     this.socket.onclose = () => alert("WebSocket connection closed");
   }
 
   public teardown(): void {
     this.eventListeners.forEach(el => document.removeEventListener(el.event, el.method));
+    clearInterval(this.sendLoopId);
   }
 
   public update(deltaTime: number): void {
@@ -101,7 +120,25 @@ class PlayingState implements GameState {
     }
 
     this.player.update();
-    this.items.forEach(item => item.update())
+    this.items.forEach(item => item.update());
+  }
+
+  private sendUpdate() {
+    this.socket!.send(JSON.stringify({
+      messageType: "update-player", data: {
+        position: {
+          x: this.player.x,
+          y: this.player.y
+        },
+        vector: {
+          dx: this.player.dx,
+          dy: this.player.dy
+        },
+        animationFrame: this.player.animationFrame,
+        movementState: this.player.movementState,
+        direction: this.player.direction
+      }
+    }));
   }
 
   private handleCollisions(): any {
@@ -176,6 +213,23 @@ class PlayingState implements GameState {
     const clampedDy = clampAbsolute(20, dy);
 
     this.viewport.translate(this.viewport.x - clampedDx, this.viewport.y - clampedDy);
+  }
+
+  private handleMessage(msg: MessageEvent) {
+    const json = JSON.parse(msg.data);
+    const data = json.data;
+    switch (json.messageType) {
+      case "player-state": {
+        this.allPlayers = data.players.map((player: any) => {
+          const existingPlayer = new Player(player.position.x, player.position.y, player.vector.dx, player.vector.dy);
+          existingPlayer.animationFrame = player.animationFrame;
+          existingPlayer.direction = player.direction;
+          existingPlayer.movementState = player.movementState;
+          return existingPlayer
+        });
+        break;
+      }
+    }
   }
 }
 
