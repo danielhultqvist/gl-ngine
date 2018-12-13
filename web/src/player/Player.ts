@@ -13,6 +13,7 @@ class Player implements Renderable, Updateable {
   y: number;
   dx: number;
   dy: number;
+  readonly username: string;
 
   animationFrame: number = 0;
   movementState: MovementState = MovementState.STAND;
@@ -23,11 +24,12 @@ class Player implements Renderable, Updateable {
   readonly widthMargin: number = 16;
   readonly heightMargin: number = 10;
 
-  constructor(x: number, y: number, dx: number, dy: number) {
+  constructor(x: number, y: number, dx: number, dy: number, username: string) {
     this.x = x;
     this.y = y;
     this.dx = dx;
     this.dy = dy;
+    this.username = username;
   }
 
   public hitbox(): Coordinate[] {

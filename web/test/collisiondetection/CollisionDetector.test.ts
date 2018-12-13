@@ -10,7 +10,7 @@ import {Axis} from "../../src/geometry/Axis";
 test('push player to the left of colliding object', () => {
   const decomposer = new KeilDecomposer();
   const detector = new CollisionDetector();
-  const player = new Player(100, 100, 0, 0);
+  const player = new Player(100, 100, 0, 0, "username");
   const mapObjects: MapObject[] = [
     new MapObject(new Polygon([
       new Coordinate(100, -500),
@@ -31,7 +31,7 @@ test('push player to the left of colliding object', () => {
 test('push player to the right of colliding object', () => {
   const decomposer = new KeilDecomposer();
   const detector = new CollisionDetector();
-  const player = new Player(160, 100, 0, 0);
+  const player = new Player(160, 100, 0, 0, "username");
   const mapObjects: MapObject[] = [
     new MapObject(new Polygon([
       new Coordinate(100, -500),
@@ -52,7 +52,7 @@ test('push player to the right of colliding object', () => {
 test('push player upwards of colliding object', () => {
   const decomposer = new KeilDecomposer();
   const detector = new CollisionDetector();
-  const player = new Player(100, 100, 0, 0);
+  const player = new Player(100, 100, 0, 0, "username");
   const mapObjects: MapObject[] = [
     new MapObject(new Polygon([
       new Coordinate(-500, 100 + player.height * 4 / 5),
@@ -73,7 +73,7 @@ test('push player upwards of colliding object', () => {
 test('push player downwards of colliding object', () => {
   const decomposer = new KeilDecomposer();
   const detector = new CollisionDetector();
-  const player = new Player(100, 100, 0, 0);
+  const player = new Player(100, 100, 0, 0, "username");
   const mapObjects: MapObject[] = [
     new MapObject(new Polygon([
       new Coordinate(-500, -300),
@@ -94,7 +94,7 @@ test('push player downwards of colliding object', () => {
 test('push player diagonally of colliding object', () => {
   const decomposer = new KeilDecomposer();
   const detector = new CollisionDetector();
-  const player = new Player(140, 140, 0, 0);
+  const player = new Player(140, 140, 0, 0, "username");
   const mapObjects: MapObject[] = [
     new MapObject(new Polygon([
       new Coordinate(100, 100),

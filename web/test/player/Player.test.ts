@@ -2,7 +2,7 @@ import {Player} from "../../src/player/Player";
 import {Coordinate} from "../../src/geometry/Coordinate";
 
 test('calculate player hitbox', () => {
-  const player = new Player(10, 25, 0, 0);
+  const player = new Player(10, 25, 0, 0, "username");
 
   expect(player.hitbox())
     .toEqual([

@@ -4,7 +4,6 @@ import {Gravity} from "../../physics/Gravity";
 import {Map} from "../../map/Map";
 import {Player} from "../../player/Player";
 import {KeyState} from "./KeyState";
-import {CollisionVector} from "../../collisiondetection/CollisionVector";
 import {CollisionDetector} from "../../collisiondetection/CollisionDetector";
 import {keyDownHandler, keyUpHandler, mouseDownHandler, mouseMoveHandler} from "./EventHandler";
 import {MapLoader} from "../../map/MapLoader";
@@ -18,6 +17,8 @@ import {RenderContext} from "../../rendering/RenderContext";
 import {MouseState} from "./MouseState";
 import {clampAbsolute, subtractSigned} from "../../util/MathUtils";
 import {Item} from "../../spells/Item";
+import {UpdatePlayerMessage} from "./UpdatePlayerMessage";
+import {CollisionHandler} from "./CollisionHandler";
 
 class PlayingState implements GameState {
 
@@ -32,21 +33,21 @@ class PlayingState implements GameState {
   private readonly viewport: Viewport;
   private readonly items: Item[];
 
-  private collisionVectors: CollisionVector[] = [];
   private collisionDetector: CollisionDetector = new CollisionDetector();
   private eventListeners: EventListener[] = [];
   private socket: WebSocket | null = null;
-  private allPlayers: Player[];
+  private otherPlayers: Player[];
 
   private sendLoopId: number = -1;
   private static SEND_UPDATE_RATE: number = 1000 / 50;
 
   constructor() {
-    this.player = new Player(325, 25, 0, 20);
+    this.player = new Player(325, 25, 0, 20, Math.random()
+      .toString(36));
     this.map = MapLoader.load(MAP_4);
     this.viewport = new Viewport(0, 0, 100, 100);
     this.items = [];
-    this.allPlayers = [];
+    this.otherPlayers = [];
   }
 
   public id(): StateId {
@@ -62,9 +63,9 @@ class PlayingState implements GameState {
     const renderContext: RenderContext = new CanvasRenderContext(canvas, this.viewport);
 
     this.map.render(renderContext);
-    // this.player.render(renderContext);
+    this.player.render(renderContext);
     this.items.forEach(item => item.render(renderContext));
-    this.allPlayers.forEach(player => {
+    this.otherPlayers.forEach(player => {
       player.render(renderContext);
     })
   }
@@ -96,7 +97,7 @@ class PlayingState implements GameState {
       this.socket!.send(JSON.stringify({
           messageType: "register",
           data: {
-            username: "Player 1"
+            username: this.player.username,
           }
         }
       ));
@@ -112,7 +113,9 @@ class PlayingState implements GameState {
 
   public update(deltaTime: number): void {
     this.handleEvents(deltaTime);
-    const {bottomCollision, topCollision} = this.handleCollisions();
+
+    const {bottomCollision, topCollision} =
+      CollisionHandler.handle(this.player, this.map, this.collisionDetector);
 
     Gravity.apply(this.player, deltaTime);
     if (bottomCollision || topCollision) {
@@ -124,61 +127,7 @@ class PlayingState implements GameState {
   }
 
   private sendUpdate() {
-    this.socket!.send(JSON.stringify({
-      messageType: "update-player", data: {
-        position: {
-          x: this.player.x,
-          y: this.player.y
-        },
-        vector: {
-          dx: this.player.dx,
-          dy: this.player.dy
-        },
-        animationFrame: this.player.animationFrame,
-        movementState: this.player.movementState,
-        direction: this.player.direction
-      }
-    }));
-  }
-
-  private handleCollisions(): any {
-    let bottomCollision: boolean = false;
-    let topCollision: boolean = false;
-
-    if (this.player.y > this.map.boundary.bottomRight.y - this.player.height) {
-      this.player.y = this.map.boundary.bottomRight.y - this.player.height;
-      this.player.dy = 0;
-      bottomCollision = true;
-    } else if (this.player.y < this.map.boundary.topLeft.y) {
-      this.player.y = 0;
-      this.player.dy = 0;
-      bottomCollision = true;
-    }
-    if (this.player.x > this.map.boundary.bottomRight.x - this.player.width) {
-      this.player.x = this.map.boundary.bottomRight.x - this.player.width;
-      this.player.dx = 0;
-    } else if (this.player.x < this.map.boundary.topLeft.x) {
-      this.player.x = 0;
-      this.player.dx = 0;
-    }
-
-    this.collisionVectors = this.collisionDetector.detect(this.player, this.map.objects);
-
-    let collisionDeltaX = 0;
-    let collisionDeltaY = 0;
-    this.collisionVectors.forEach(v => {
-      collisionDeltaX += v.vector.dx * v.magnitude;
-      collisionDeltaY += v.vector.dy * v.magnitude;
-    });
-
-    this.player.x = this.player.x + collisionDeltaX;
-    this.player.y = this.player.y + collisionDeltaY;
-    if (collisionDeltaY < -1e-8 && this.player.dy > 0) {
-      bottomCollision = true;
-    } else if (collisionDeltaY > 1e-8 && this.player.dy < 0) {
-      topCollision = true;
-    }
-    return {bottomCollision, topCollision};
+    this.socket!.send(UpdatePlayerMessage.toJsonString(this.player));
   }
 
   private handleEvents(deltaTime: number): void {
@@ -238,13 +187,21 @@ class PlayingState implements GameState {
     const data = json.data;
     switch (json.messageType) {
       case "player-state": {
-        this.allPlayers = data.players.map((player: any) => {
-          const existingPlayer = new Player(player.position.x, player.position.y, player.vector.dx, player.vector.dy);
-          existingPlayer.animationFrame = player.animationFrame;
-          existingPlayer.direction = player.direction;
-          existingPlayer.movementState = player.movementState;
-          return existingPlayer
-        });
+        this.otherPlayers = data.players
+          .filter((player: any) => player.username != this.player.username)
+          .map((player: any) => {
+            const existingPlayer = new Player(
+              player.position.x,
+              player.position.y,
+              player.vector.dx,
+              player.vector.dy,
+              player.username
+            );
+            existingPlayer.animationFrame = player.animationFrame;
+            existingPlayer.direction = player.direction;
+            existingPlayer.movementState = player.movementState;
+            return existingPlayer
+          });
         break;
       }
     }
