@@ -16,7 +16,7 @@ import {CanvasRenderContext} from "../../rendering/canvas/CanvasRenderContext";
 import {Viewport} from "../../rendering/Viewport";
 import {RenderContext} from "../../rendering/RenderContext";
 import {MouseState} from "./MouseState";
-import {clampAbsolute} from "../../util/MathUtils";
+import {clampAbsolute, subtractSigned} from "../../util/MathUtils";
 import {Item} from "../../spells/Item";
 
 class PlayingState implements GameState {
@@ -39,7 +39,7 @@ class PlayingState implements GameState {
   private allPlayers: Player[];
 
   private sendLoopId: number = -1;
-  private static SEND_UPDATE_RATE: number = 1000/50;
+  private static SEND_UPDATE_RATE: number = 1000 / 50;
 
   constructor() {
     this.player = new Player(325, 25, 0, 20);
@@ -196,23 +196,41 @@ class PlayingState implements GameState {
     this.player.y = this.player.y + this.player.dy;
   }
 
+  // TODO [dh] This looks like crap!
   private translateViewport(canvas: HTMLCanvasElement): void {
-    const viewportWidth = canvas.width;
-    const viewportHeight = canvas.height;
+    const {mouseOffsetX, mouseOffsetY} = this.mouseOffset(canvas);
 
-    const mouseOffsetX = clampAbsolute(viewportWidth / 4, viewportWidth / 2 - this.mouseState.relativeX);
-    const mouseOffsetY = clampAbsolute(viewportHeight / 4, viewportHeight / 2 - this.mouseState.relativeY);
-
-    const x = Math.max(0, this.player.getCenter().x - viewportWidth / 2 - mouseOffsetX);
-    const y = Math.max(0, this.player.getCenter().y - viewportHeight / 2 - mouseOffsetY);
+    const x = Math.max(0, this.player.getCenter().x - canvas.width / 2 - mouseOffsetX);
+    const y = Math.max(0, this.player.getCenter().y - canvas.height / 2 - mouseOffsetY);
 
     const dx = this.viewport.x - x;
     const dy = this.viewport.y - y;
 
-    const clampedDx = clampAbsolute(20, dx);
-    const clampedDy = clampAbsolute(20, dy);
+    const clampedDx = clampAbsolute(canvas.width / 50, dx);
+    const clampedDy = clampAbsolute(canvas.height / 50, dy);
 
     this.viewport.translate(this.viewport.x - clampedDx, this.viewport.y - clampedDy);
+  }
+
+  // TODO [dh] This looks like crap!
+  private mouseOffset(canvas: HTMLCanvasElement) {
+    const minMouseOffsetX = canvas.width / 6;
+    const minMouseOffsetY = canvas.height / 6;
+
+    let mouseOffsetX = clampAbsolute(canvas.width / 4, canvas.width / 2 - this.mouseState.relativeX);
+    let mouseOffsetY = clampAbsolute(canvas.height / 4, canvas.height / 2 - this.mouseState.relativeY);
+
+    if (Math.abs(mouseOffsetX) < minMouseOffsetX) {
+      mouseOffsetX = 0;
+    } else {
+      mouseOffsetX = subtractSigned(mouseOffsetX, minMouseOffsetX)
+    }
+    if (Math.abs(mouseOffsetY) < minMouseOffsetY) {
+      mouseOffsetY = 0;
+    } else {
+      mouseOffsetY = subtractSigned(mouseOffsetY, minMouseOffsetY);
+    }
+    return {mouseOffsetX, mouseOffsetY};
   }
 
   private handleMessage(msg: MessageEvent) {
