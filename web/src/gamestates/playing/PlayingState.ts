@@ -58,18 +58,6 @@ class PlayingState implements GameState {
     return this.nextState;
   }
 
-  public render(canvas: HTMLCanvasElement): void {
-    this.translateViewport(canvas);
-    const renderContext: RenderContext = new CanvasRenderContext(canvas, this.viewport);
-
-    this.map.render(renderContext);
-    this.player.render(renderContext);
-    this.items.forEach(item => item.render(renderContext));
-    this.otherPlayers.forEach(player => {
-      player.render(renderContext);
-    })
-  }
-
   public setup(canvas: HTMLCanvasElement): void {
     this.viewport.rescale(canvas.width, canvas.height);
 
@@ -111,26 +99,23 @@ class PlayingState implements GameState {
     clearInterval(this.sendLoopId);
   }
 
-  public update(deltaTime: number): void {
-    this.handleEvents(deltaTime);
-
-    const {bottomCollision, topCollision} =
-      CollisionHandler.handle(this.player, this.map, this.collisionDetector);
-
-    Gravity.apply(this.player, deltaTime);
-    if (bottomCollision || topCollision) {
-      this.player.dy = 0;
-    }
-
-    this.player.update();
-    this.items.forEach(item => item.update());
-  }
-
   private sendUpdate() {
     this.socket!.send(UpdatePlayerMessage.toJsonString(this.player));
   }
 
-  private handleEvents(deltaTime: number): void {
+  public render(canvas: HTMLCanvasElement): void {
+    this.translateViewport(canvas);
+    const renderContext: RenderContext = new CanvasRenderContext(canvas, this.viewport);
+
+    this.map.render(renderContext);
+    this.player.render(renderContext);
+    this.items.forEach(item => item.render(renderContext));
+    this.otherPlayers.forEach(player => {
+      player.render(renderContext);
+    })
+  }
+
+  public update(deltaTime: number): void {
     if (this.keyState.left && this.keyState.right) {
       this.player.dx = 0;
     } else if (this.keyState.left) {
@@ -140,11 +125,41 @@ class PlayingState implements GameState {
     } else {
       this.player.dx = 0;
     }
-
     this.player.x = this.player.x + this.player.dx;
     this.player.y = this.player.y + this.player.dy;
-  }
 
+    const {bottomCollision, topCollision} =
+      CollisionHandler.handle(this.player, this.map, this.collisionDetector);
+
+    Gravity.apply(this.player, deltaTime);
+    if (bottomCollision || topCollision) {
+      this.player.dy = 0;
+    }
+    this.player.update();
+
+    this.otherPlayers.forEach(player => {
+      const dx = 300 * deltaTime * (player.dx > 0 ? 1 : -1);
+      const dy = 300 * deltaTime * (player.dy > 0 ? 1 : -1);
+
+      if (Math.abs(player.dx) > 10) {
+        player.x = player.x + dx;
+      }
+      if (Math.abs(player.dy) > 10) {
+        player.y = player.y + dy;
+      }
+
+      const {bottomCollision, topCollision} =
+        CollisionHandler.handle(player, this.map, this.collisionDetector);
+
+      Gravity.apply(player, deltaTime);
+      if (bottomCollision || topCollision) {
+        player.dy = 0;
+      }
+      player.update(); 
+    });
+    
+    this.items.forEach(item => item.update());
+  }
   // TODO [dh] This looks like crap!
   private translateViewport(canvas: HTMLCanvasElement): void {
     const {mouseOffsetX, mouseOffsetY} = this.mouseOffset(canvas);

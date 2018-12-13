@@ -26,6 +26,12 @@ export function MAP_4(decomposer: PolygonDecomposer) {
         new Coordinate(74, 681),
       ]), decomposer),
       new MapObject(new Polygon([
+        new Coordinate(1000, 300),
+        new Coordinate(1200, 300),
+        new Coordinate(1200, 400),
+        new Coordinate(1000, 400),
+      ]), decomposer),
+      new MapObject(new Polygon([
         new Coordinate(370, 1054),
         new Coordinate(625, 1108),
         new Coordinate(905, 1124),
