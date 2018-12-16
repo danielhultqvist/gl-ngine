@@ -170,8 +170,8 @@ class PlayingState implements GameState {
     const dx = this.viewport.x - x;
     const dy = this.viewport.y - y;
 
-    const clampedDx = clampAbsolute(canvas.width / 50, dx);
-    const clampedDy = clampAbsolute(canvas.height / 50, dy);
+    const clampedDx = clampAbsolute(canvas.width / 100, dx);
+    const clampedDy = clampAbsolute(canvas.height / 100, dy);
 
     this.viewport.translate(this.viewport.x - clampedDx, this.viewport.y - clampedDy);
   }
