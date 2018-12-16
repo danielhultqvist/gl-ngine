@@ -55,11 +55,13 @@ export function mouseDownHandler(e: MouseEvent, player: Player, viewport: Viewpo
   switch (e.button) {
     case 0:
       Log.log(`Placing item at ${screenX}, ${screenY}`);
+      const startX = player.x + player.width / 2;
+      const startY = player.y + player.height / 2;
       items.push(
         new Fireball(
-          player.x + player.width / 2,
-          player.y + player.height / 2,
-          new Vector(screenX - player.x, screenY - player.y).normalized()));
+          startX,
+          startY,
+          new Vector(screenX - startX, screenY - startY).normalized()));
       break;
     case 1:
       player.x = screenX;
