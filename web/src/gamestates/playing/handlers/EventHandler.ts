@@ -1,10 +1,10 @@
-import {KeyState} from "./KeyState";
-import {Player} from "../../player/Player";
-import {Viewport} from "../../rendering/Viewport";
-import {Log} from "../../util/Log";
-import {MouseState} from "./MouseState";
-import {Item} from "../../spells/Item";
-import {Fireball} from "../../spells/Fireball";
+import {KeyState} from "../states/KeyState";
+import {Player} from "../../../player/Player";
+import {Viewport} from "../../../rendering/Viewport";
+import {Log} from "../../../util/Log";
+import {MouseState} from "../states/MouseState";
+import {Item} from "../../../spells/Item";
+import {Fireball} from "../../../spells/Fireball";
 
 export function keyDownHandler(e: KeyboardEvent, state: KeyState, player: Player) {
   switch (e.code) {

@@ -1,6 +1,6 @@
-import {Player} from "../../player/Player";
-import {Map} from "../../map/Map";
-import {CollisionDetector} from "../../collisiondetection/CollisionDetector";
+import {Player} from "../../../player/Player";
+import {Map} from "../../../map/Map";
+import {CollisionDetector} from "../../../collisiondetection/CollisionDetector";
 
 class CollisionHandler {
 

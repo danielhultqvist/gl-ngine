@@ -3,9 +3,9 @@ import {StateId} from "../StateId";
 import {Gravity} from "../../physics/Gravity";
 import {Map} from "../../map/Map";
 import {Player} from "../../player/Player";
-import {KeyState} from "./KeyState";
+import {KeyState} from "./states/KeyState";
 import {CollisionDetector} from "../../collisiondetection/CollisionDetector";
-import {keyDownHandler, keyUpHandler, mouseDownHandler, mouseMoveHandler} from "./EventHandler";
+import {keyDownHandler, keyUpHandler, mouseDownHandler, mouseMoveHandler} from "./handlers/EventHandler";
 import {MapLoader} from "../../map/MapLoader";
 import {MAP_4} from "../../map/StandardMaps";
 import {NoopState} from "../NoopState";
@@ -14,11 +14,11 @@ import {EventListener} from "../../events/EventListener";
 import {CanvasRenderContext} from "../../rendering/canvas/CanvasRenderContext";
 import {Viewport} from "../../rendering/Viewport";
 import {RenderContext} from "../../rendering/RenderContext";
-import {MouseState} from "./MouseState";
+import {MouseState} from "./states/MouseState";
 import {clampAbsolute, subtractSigned} from "../../util/MathUtils";
 import {Item} from "../../spells/Item";
-import {UpdatePlayerMessage} from "./UpdatePlayerMessage";
-import {CollisionHandler} from "./CollisionHandler";
+import {UpdatePlayerMessage} from "./messages/UpdatePlayerMessage";
+import {CollisionHandler} from "./handlers/CollisionHandler";
 
 class PlayingState implements GameState {
 

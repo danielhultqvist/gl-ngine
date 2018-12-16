@@ -94,7 +94,7 @@ class Main {
     }
 
     if (nextState != null) {
-      this.currentGameState.teardown();
+      this.currentGameState.teardown(canvas);
       nextState.setup(this.canvas);
       this.currentGameState = nextState;
     }
