@@ -47,7 +47,6 @@ fun main(args: Array<String>) {
                         player?.animationFrame = data.getInt("animationFrame")
                         player?.movementState = data.getInt("movementState")
                         player?.direction = data.getInt("direction")
-                        println("Received update for " + player?.id)
                     }
                     else -> {
                         println("Received unknown message type " + json.get("messageType"))
@@ -89,7 +88,6 @@ fun main(args: Array<String>) {
                     .toString()
 
             broadcastMessage(message)
-            println("Sending updates!")
             Thread.sleep(UPDATE_RATE)
         }
     }, isDaemon = true)

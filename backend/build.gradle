@@ -16,6 +16,7 @@ repositories {
 
 apply plugin: 'kotlin'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 group = 'se.typedef.wizardwars'
 version = '0.0.1-SNAPSHOT'
@@ -36,3 +37,4 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
 }
 
+mainClassName = "se.typedef.wizardwars.MainKt"
