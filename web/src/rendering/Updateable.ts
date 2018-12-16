@@ -1,5 +1,5 @@
 interface Updateable {
-  update(): void;
+  update(deltaTime: number): void;
 }
 
 export {Updateable}

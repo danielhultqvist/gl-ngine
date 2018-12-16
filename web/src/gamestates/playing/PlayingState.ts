@@ -115,6 +115,7 @@ class PlayingState implements GameState {
   }
 
   public update(deltaTime: number): void {
+    // TODO [dħ] Should all of this move into Player#update(deltaTime)?
     if (this.keyState.left && this.keyState.right) {
       this.player.dx = 0;
     } else if (this.keyState.left) {
@@ -134,7 +135,7 @@ class PlayingState implements GameState {
     if (bottomCollision || topCollision) {
       this.player.dy = 0;
     }
-    this.player.update();
+    this.player.update(deltaTime);
 
     this.otherPlayers.forEach(player => {
       const dx = 300 * deltaTime * (player.dx > 0 ? 1 : -1);
@@ -154,10 +155,10 @@ class PlayingState implements GameState {
       if (bottomCollision || topCollision) {
         player.dy = 0;
       }
-      player.update();
+      player.update(deltaTime);
     });
 
-    this.items.forEach(item => item.update());
+    this.items.forEach(item => item.update(deltaTime));
   }
 
   // TODO [dh] This looks like crap!

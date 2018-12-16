@@ -7,6 +7,7 @@ import {Image} from "../rendering/Image";
 
 class Fireball implements Item {
   private static readonly MAX_ANIMATION = 7 * 8 + 5;
+  private static readonly SPEED = 400;
 
   x: number;
   y: number;
@@ -23,11 +24,11 @@ class Fireball implements Item {
   readonly widthMargin: number = 20;
   readonly heightMargin: number = 20;
 
-  constructor(x: number, y: number, dx: number, dy: number) {
+  constructor(x: number, y: number, direction: Vector) {
     this.x = x;
     this.y = y;
     this.animationFrame = 0;
-    this.direction = new Vector(dx, dy);
+    this.direction = direction;
     this.image = new Image("spells-fireball", 0, 0, 0, 0)
   }
 
@@ -40,11 +41,13 @@ class Fireball implements Item {
     ];
   }
 
-  public update(): void {
+  public update(deltaTime: number): void {
     this.animationFrame += 1;
     if (this.animationFrame >= Fireball.MAX_ANIMATION) {
       this.animationFrame = 0;
     }
+    this.x += this.direction.normalized().dx * Fireball.SPEED * deltaTime;
+    this.y += this.direction.normalized().dy * Fireball.SPEED * deltaTime;
   }
 
   public render(renderContext: RenderContext): void {
@@ -52,6 +55,8 @@ class Fireball implements Item {
     const srcY = Math.floor(this.animationFrame / 8) * this.boxHeight + this.offsetY;
     const srcW = this.width;
     const srcH = this.height;
+    const vectorAngleDifference = Math.acos(new Vector(0, 1).dot(this.direction.normalized()));
+    const rotation = this.direction.dx < 0 ? vectorAngleDifference : -vectorAngleDifference;
 
     renderContext.drawImageCenter(
       AssetStore.get(this.image.src),
@@ -64,7 +69,7 @@ class Fireball implements Item {
       10,
       60,
       1,
-      (Math.PI * -30) / 180);
+      rotation);
   }
 
   public getCenter(): Coordinate {

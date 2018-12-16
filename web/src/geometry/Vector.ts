@@ -19,6 +19,9 @@ class Vector {
 
   public normalized(): Vector {
     const normalizeFactor: number = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
+    if (normalizeFactor == 0) {
+      return new Vector(0, 0);
+    }
 
     return new Vector(this.dx / normalizeFactor, this.dy / normalizeFactor);
   }
