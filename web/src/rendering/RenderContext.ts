@@ -10,6 +10,20 @@ interface RenderContext {
     dstX: number, dstY: number, dstW: number, dstH: number
   ): void;
 
+  drawImageCenter(
+    image: HTMLImageElement,
+    x: number,
+    y: number,
+    srcX: number,
+    srcY: number,
+    width: number,
+    height: number,
+    centerX: number,
+    centerY: number,
+    scale: number,
+    angleInRadians: number
+  ): void
+
   drawFullImage(
     element: HTMLImageElement,
     x: number,

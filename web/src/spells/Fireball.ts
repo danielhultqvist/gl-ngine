@@ -1,21 +1,18 @@
-import {MovementState} from "../player/MovementState";
-import {Direction} from "../player/Direction";
 import {Coordinate} from "../geometry/Coordinate";
 import {RenderContext} from "../rendering/RenderContext";
 import {AssetStore} from "../assets/AssetStore";
 import {Item} from "./Item";
+import {Vector} from "../geometry/Vector";
+import {Image} from "../rendering/Image";
 
 class Fireball implements Item {
   private static readonly MAX_ANIMATION = 7 * 8 + 5;
 
   x: number;
   y: number;
-  dx: number;
-  dy: number;
-
-  animationFrame: number = 0;
-  movementState: MovementState = MovementState.STAND;
-  direction: Direction = Direction.RIGHT;
+  direction: Vector;
+  animationFrame: number;
+  image: Image;
 
   readonly offsetX: number = 40;
   readonly offsetY: number = 20;
@@ -29,8 +26,9 @@ class Fireball implements Item {
   constructor(x: number, y: number, dx: number, dy: number) {
     this.x = x;
     this.y = y;
-    this.dx = dx;
-    this.dy = dy;
+    this.animationFrame = 0;
+    this.direction = new Vector(dx, dy);
+    this.image = new Image("spells-fireball", 0, 0, 0, 0)
   }
 
   public hitbox(): Coordinate[] {
@@ -55,15 +53,18 @@ class Fireball implements Item {
     const srcW = this.width;
     const srcH = this.height;
 
-    const dstX = this.x;
-    const dstY = this.y;
-    const dstW = this.width;
-    const dstH = this.height;
-
-    renderContext.drawPartialImage(
-      AssetStore.get("spells-fireball"),
-      srcX, srcY, srcW, srcH,
-      dstX, dstY, dstW, dstH);
+    renderContext.drawImageCenter(
+      AssetStore.get(this.image.src),
+      this.x,
+      this.y,
+      srcX,
+      srcY,
+      srcW,
+      srcH,
+      10,
+      60,
+      1,
+      (Math.PI * -30) / 180);
   }
 
   public getCenter(): Coordinate {

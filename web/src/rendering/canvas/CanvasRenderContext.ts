@@ -12,7 +12,7 @@ class CanvasRenderContext implements RenderContext {
   constructor(canvas: HTMLCanvasElement, viewport: Viewport) {
     this.canvas = canvas;
     this.viewport = viewport;
-    this.context = <CanvasRenderingContext2D> this.canvas.getContext("2d");
+    this.context = <CanvasRenderingContext2D>this.canvas.getContext("2d");
   }
 
   public clear() {
@@ -38,6 +38,35 @@ class CanvasRenderContext implements RenderContext {
     const adjustedY = this.adjustYAccordingToViewport(dstY);
 
     this.context.drawImage(element, srcX, srcY, srcW, srcH, adjustedX, adjustedY, dstW, dstH);
+  }
+
+  public drawImageCenter(
+    image: HTMLImageElement,
+    x: number,
+    y: number,
+    srcX: number,
+    srcY: number,
+    width: number,
+    height: number,
+    centerX: number,
+    centerY: number,
+    scale: number,
+    angleInRadians: number
+  ): void {
+    const adjustedX = this.adjustXAccordingToViewport(x);
+    const adjustedY = this.adjustYAccordingToViewport(y);
+
+    // Translate to correct world coordinate
+    this.context.setTransform(scale, 0, 0, scale, adjustedX, adjustedY);
+
+    // Rotate positive clockwise
+    this.context.rotate(angleInRadians);
+
+    // Draw the image based on source positions and move image to center position
+    this.context.drawImage(image, srcX, srcY, width, height, -centerX, -centerY, width, height);
+
+    // Reset transform
+    this.context.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   public drawObject(coordinates: Coordinate[], color: Color): void {

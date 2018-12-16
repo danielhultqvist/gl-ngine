@@ -39,11 +39,10 @@ class PlayingState implements GameState {
   private otherPlayers: Player[];
 
   private sendLoopId: number = -1;
-  private static SEND_UPDATE_RATE: number = 1000 / 50;
+  private static SEND_UPDATE_RATE: number = 25;
 
   constructor() {
-    this.player = new Player(325, 25, 0, 20, Math.random()
-      .toString(36));
+    this.player = new Player(325, 25, 0, 20, Math.random().toString(36));
     this.map = MapLoader.load(MAP_4);
     this.viewport = new Viewport(0, 0, 100, 100);
     this.items = [];
@@ -155,11 +154,12 @@ class PlayingState implements GameState {
       if (bottomCollision || topCollision) {
         player.dy = 0;
       }
-      player.update(); 
+      player.update();
     });
-    
+
     this.items.forEach(item => item.update());
   }
+
   // TODO [dh] This looks like crap!
   private translateViewport(canvas: HTMLCanvasElement): void {
     const {mouseOffsetX, mouseOffsetY} = this.mouseOffset(canvas);
