@@ -21,7 +21,7 @@ class NoopState implements GameState {
     throw new Error("Setup called in NoopState");
   }
 
-  teardown(): void {
+  teardown(_: HTMLCanvasElement): void {
     throw new Error("Teardown called in NoopState");
   }
 

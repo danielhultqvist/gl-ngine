@@ -37,7 +37,7 @@ class MainMenuState implements GameState {
     ctx.restore()
   }
 
-  public setup(_: HTMLCanvasElement): void {
+  public setup(canvas: HTMLCanvasElement): void {
     this.eventListeners.push(
       new EventListener("keydown", (e: KeyboardEvent) => {
         e.preventDefault();
@@ -45,11 +45,11 @@ class MainMenuState implements GameState {
       }),
     );
 
-    this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
+    this.eventListeners.forEach(el => canvas.addEventListener(el.event, el.method));
   }
 
-  public teardown(): void {
-    this.eventListeners.forEach(el => document.removeEventListener(el.event, el.method));
+  public teardown(canvas: HTMLCanvasElement): void {
+    this.eventListeners.forEach(el => canvas.removeEventListener(el.event, el.method));
   }
 
   public update(_: number): void {

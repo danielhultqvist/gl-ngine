@@ -5,7 +5,7 @@ interface GameState {
   moveToState(): StateId;
   render(canvas: HTMLCanvasElement): void;
   setup(canvas: HTMLCanvasElement): void;
-  teardown(): void;
+  teardown(canvas: HTMLCanvasElement): void;
   update(deltaTime: number): void;
 }
 

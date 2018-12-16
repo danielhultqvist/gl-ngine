@@ -78,7 +78,7 @@ class PlayingState implements GameState {
         }),
     );
 
-    this.eventListeners.forEach(el => document.addEventListener(el.event, el.method));
+    this.eventListeners.forEach(el => canvas.addEventListener(el.event, el.method));
     this.socket = new WebSocket("ws://" + location.hostname + ":" + 8080 + "/join");
     this.socket.onmessage = msg => this.handleMessage(msg);
     this.socket.onopen = () => {
@@ -94,8 +94,8 @@ class PlayingState implements GameState {
     this.socket.onclose = () => alert("WebSocket connection closed");
   }
 
-  public teardown(): void {
-    this.eventListeners.forEach(el => document.removeEventListener(el.event, el.method));
+  public teardown(canvas: HTMLCanvasElement): void {
+    this.eventListeners.forEach(el => canvas.removeEventListener(el.event, el.method));
     clearInterval(this.sendLoopId);
   }
 
